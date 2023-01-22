@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LandmarkHunt", "LandmarkHunt.csproj", "{71158C95-CDDF-4864-B08B-58AD58F50BED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LandmarkHunt", "LandmarkHunt\LandmarkHunt.csproj", "{71158C95-CDDF-4864-B08B-58AD58F50BED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
