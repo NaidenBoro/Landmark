@@ -8,7 +8,7 @@
 
     <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" style="background-color: #cc7a00;" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">@User.Identity?.Name</button>
-        <ul class="dropdown-menu dropdown-menu-start dropdown-menu-lg-end dropdown-menu-dark" aria-labelledby="dropdownMenuButton1">
+        <ul class="dropdown-menu dropdown-menu-start dropdown-menu-lg-end" aria-labelledby="dropdownMenuButton1">
             <li>
                 <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">My account</a>
             </li>
@@ -25,10 +25,10 @@ else
 {
     <ul class="navbar-nav">
         <li class="nav-item">
-            <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Login">Login</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
         </li>
     </ul>
 }
