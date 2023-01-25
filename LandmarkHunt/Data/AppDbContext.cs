@@ -1,5 +1,4 @@
 ﻿using LandmarkHunt.Areas.Identity.Data;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +6,8 @@ namespace LandmarkHunt.Data;
 
 public class AppDbContext : IdentityDbContext<AppUser>
 {
+    public DbSet<Location> Locations { get; set; } = null!;
+
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
