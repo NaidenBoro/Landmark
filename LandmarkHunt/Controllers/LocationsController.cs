@@ -159,5 +159,79 @@ namespace LandmarkHunt.Controllers
         {
           return _context.Locations.Any(e => e.Id == id);
         }
+
+
+        public async Task<IActionResult> Play(int? id)
+        {
+            if (id == null || _context.Locations == null)
+            {
+                return NotFound();
+            }
+
+            var location = await _context.Locations
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (location == null)
+            {
+                return NotFound();
+            }
+
+            return View(location);
+        }
+
+        public async Task<IActionResult> Guess(int id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocDTO dto)
+        {
+            Location guess = dto.toLocation();
+            if (id != guess.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    Location? loc = await _context.Locations.FirstOrDefaultAsync(x=> guess.Id == x.Id);
+                    if (loc == null) 
+                    {
+                        return NotFound();
+                    }
+                    double Distance = DistanceTo(loc.Latitude,loc.Longitude, guess.Latitude, guess.Longitude);
+                    Console.WriteLine(Distance);
+                    return Json(Distance);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(guess);
+        }
+
+        public static double DistanceTo(double lat1, double lon1, double lat2, double lon2, char unit = 'K')
+        {
+            double rlat1 = Math.PI * lat1 / 180;
+            double rlat2 = Math.PI * lat2 / 180;
+            double theta = lon1 - lon2;
+            double rtheta = Math.PI * theta / 180;
+            double dist =
+                Math.Sin(rlat1) * Math.Sin(rlat2) + Math.Cos(rlat1) *
+                Math.Cos(rlat2) * Math.Cos(rtheta);
+            dist = Math.Acos(dist);
+            dist = dist * 180 / Math.PI;
+            dist = dist * 60 * 1.1515;
+
+            switch (unit)
+            {
+                case 'K': //Kilometers -> default
+                    return dist * 1.609344;
+                case 'N': //Nautical Miles 
+                    return dist * 0.8684;
+                case 'M': //Miles
+                    return dist;
+            }
+
+            return dist;
+        }
     }
 }
