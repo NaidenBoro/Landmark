@@ -259,7 +259,7 @@ namespace LandmarkHunt.Controllers
 
         public static int DistanceScore(double lat1, double lon1, double lat2, double lon2, int hardness = 0)
         {
-            //Graph for different hardness levels - https://www.desmos.com/calculator/2udfjvm1h5
+            //Graph for different hardness levels - https://www.desmos.com/calculator/lml2drtntc
             double multiplier;
             switch (hardness)
             {
