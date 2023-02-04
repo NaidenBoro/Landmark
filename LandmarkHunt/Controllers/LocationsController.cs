@@ -195,7 +195,7 @@ namespace LandmarkHunt.Controllers
                     {
                         return NotFound();
                     }
-                    double Distance = DistanceTo(loc.Latitude,loc.Longitude, guess.Latitude, guess.Longitude);
+                    double Distance = DistanceScore(loc.Latitude,loc.Longitude, guess.Latitude, guess.Longitude) + YearScore(guess.Year,loc.Year);
                     Console.WriteLine(Distance);
                     return Json(Distance);
                 }
@@ -232,6 +232,51 @@ namespace LandmarkHunt.Controllers
             }
 
             return dist;
+        }
+
+        public static int YearScore(int guess,int actual,int hardness=0)
+        {
+            //Graph for different hardness levels - https://www.desmos.com/calculator/xcdd0u3lbd
+            double multiplier;
+            switch (hardness)
+            {
+                
+                case 1: //medium
+                    multiplier = 2;
+                    break;
+                case 2: //hard
+                    multiplier = 3;
+                    break;
+                default: //easy
+                    multiplier = 1;
+                    break;
+            }
+
+            double modifier = ((double)(2500 - actual))/(10*multiplier);
+            double score = Math.Exp(-0.5*(Math.Pow((guess-actual)/modifier,2)));
+            return (int)(score * multiplier*500);
+        }
+
+        public static int DistanceScore(double lat1, double lon1, double lat2, double lon2, int hardness = 0)
+        {
+            //Graph for different hardness levels - https://www.desmos.com/calculator/2udfjvm1h5
+            double multiplier;
+            switch (hardness)
+            {
+
+                case 1: //medium
+                    multiplier = 2;
+                    break;
+                case 2: //hard
+                    multiplier = 3;
+                    break;
+                default: //easy
+                    multiplier = 1;
+                    break;
+            }
+            double distance = DistanceTo(lat1, lon1, lat2, lon1);
+            double score = Math.Max(Math.Min((200.1 / multiplier-distance)/(200/multiplier),500),0);
+            return (int)(score * multiplier * 500);
         }
     }
 }
