@@ -23,17 +23,12 @@
                 <input asp-for="Year" class="form-control" />
                 <span asp-validation-for="Year" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Latitude" class="control-label"></label>
-                <input asp-for="Latitude" class="form-control" />
-                <span asp-validation-for="Latitude" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Longitude" class="control-label"></label>
-                <input asp-for="Longitude" class="form-control" />
-                <span asp-validation-for="Longitude" class="text-danger"></span>
-            </div>
-            <div id="us2" style="width: 500px; height: 400px;"></div>
+
+
+            <input asp-for="Latitude" class="form-control" hidden />
+            <input asp-for="Longitude" class="form-control" hidden />
+            <div id="map" style="width: 500px; height: 400px;"></div>
+
             <div class="form-group">
                 <label asp-for="PhotoUrl" class="control-label"></label>
                 <input asp-for="PhotoUrl" class="form-control" />
@@ -51,5 +46,7 @@
 </div>
 
 @section Scripts {
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=weather"></script>
+    <script src="~/js/LocationPicker/picker.js?version-2.1"></script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

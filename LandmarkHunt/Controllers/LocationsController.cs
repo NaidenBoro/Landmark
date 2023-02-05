@@ -188,31 +188,23 @@ namespace LandmarkHunt.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                Location? loc = await _context.Locations.FirstOrDefaultAsync(x=> guess.Id == x.Id);
+                if (loc == null) 
                 {
-                    Location? loc = await _context.Locations.FirstOrDefaultAsync(x=> guess.Id == x.Id);
-                    if (loc == null) 
-                    {
-                        return NotFound();
-                    }
-                    double Distance = DistanceScore(loc.Latitude,loc.Longitude, guess.Latitude, guess.Longitude) + YearScore(guess.Year,loc.Year);
-                    Console.WriteLine(Distance);
-                    return Json(Distance);
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
-                return RedirectToAction(nameof(Index));
+                int Score = GetScore(loc,guess);
+                return View(new GuessDTO(loc,guess,Score));
             }
-            return View(guess);
+            //implement 404 page
+            return RedirectToAction(nameof(Index));
         }
-
-        public static double DistanceTo(double lat1, double lon1, double lat2, double lon2, char unit = 'K')
+        public static int GetScore(Location loc, Location guess,int hardness = 0) => DistanceScore(loc, guess,hardness) + YearScore(guess.Year, loc.Year,hardness);
+        public static double DistanceTo(Location loc, Location guess, char unit = 'K')
         {
-            double rlat1 = Math.PI * lat1 / 180;
-            double rlat2 = Math.PI * lat2 / 180;
-            double theta = lon1 - lon2;
+            double rlat1 = Math.PI * loc.Latitude / 180;
+            double rlat2 = Math.PI * guess.Latitude / 180;
+            double theta = loc.Longitude - guess.Longitude;
             double rtheta = Math.PI * theta / 180;
             double dist =
                 Math.Sin(rlat1) * Math.Sin(rlat2) + Math.Cos(rlat1) *
@@ -233,8 +225,7 @@ namespace LandmarkHunt.Controllers
 
             return dist;
         }
-
-        public static int YearScore(int guess,int actual,int hardness=0)
+        public static int YearScore(int guess,int actual,int hardness)
         {
             //Graph for different hardness levels - https://www.desmos.com/calculator/xcdd0u3lbd
             double multiplier;
@@ -256,8 +247,7 @@ namespace LandmarkHunt.Controllers
             double score = Math.Exp(-0.5*(Math.Pow((guess-actual)/modifier,2)));
             return (int)(score * multiplier*500);
         }
-
-        public static int DistanceScore(double lat1, double lon1, double lat2, double lon2, int hardness = 0)
+        public static int DistanceScore(Location loc,Location guess,int hardness)
         {
             //Graph for different hardness levels - https://www.desmos.com/calculator/lml2drtntc
             double multiplier;
@@ -274,7 +264,7 @@ namespace LandmarkHunt.Controllers
                     multiplier = 1;
                     break;
             }
-            double distance = DistanceTo(lat1, lon1, lat2, lon1);
+            double distance = DistanceTo(loc, guess);
             double score = Math.Max(Math.Min((200.1 / multiplier-distance)/(200/multiplier),500),0);
             return (int)(score * multiplier * 500);
         }
