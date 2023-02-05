@@ -4,25 +4,33 @@
     ViewData["Title"] = "Guess";
 }
 
-<h1>Guess</h1>
-<h2>Your score was @(Model.Score)!</h2>
-<div>
-    
-</div>
-<div class="row">
-    <div class="col-md-4">
+
+
+<div class="h-100 d-flex align-items-center justify-content-center">
+    <div class="col-10 col-md-8 col-lg-6 text-center">
+        <h1>@Model.Actual.Name</h1>
+        <h2>Your score was @(Model.Score)!</h2>
+        @if (Model.Actual.Year==Model.Guess.Year)
+        {
+            <a>You were spot on, the year is @(Model.Actual.Year)!</a>
+        }else if (Math.Abs(Model.Actual.Year - Model.Guess.Year) == 1)
+        {
+            <a>Your guess was just one year appart, the year is actualy @(Model.Actual.Year)!</a>
+        }else{
+            <a>Your guess was @(Math.Abs(Model.Actual.Year - Model.Guess.Year)) years appart, the year is actualy @(Model.Actual.Year).</a>
+        }
+        <a>Your guess was @(String.Format("{0:0.##}", Model.Distance)) km away.</a>
         <input id="Latitude" class="form-control" value="@Model.Actual.Latitude" hidden/>
         <input id="Longitude" class="form-control" value="@Model.Actual.Longitude" hidden/>
     
         <input id="GLat" class="form-control" value="@Model.Guess.Latitude" hidden />
         <input id="GLon" class="form-control" value="@Model.Guess.Longitude" hidden/>
-        <div id="map" style="width: 500px; height: 400px;"></div>
+        <div id="map" style="width: 100%; height: 500px;"></div>
+        <a asp-controller="Home" asp-action="Index">Home</a>
     </div>
 </div>
-<div>
-    <a asp-controller="Home" asp-action="Index">Home</a>
-</div>
+
 @section Scripts {
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=weather"></script>
-    <script src="~/js/LocationPicker/showGuess.js?version-2.8"></script>
+    <script src="~/js/LocationPicker/showGuess.js?version-2.9"></script>
 }

@@ -194,7 +194,7 @@ namespace LandmarkHunt.Controllers
                     return NotFound();
                 }
                 int Score = GetScore(loc,guess);
-                return View(new GuessDTO(loc,guess,Score));
+                return View(new GuessDTO(loc,guess,Score,DistanceTo(loc,guess)));
             }
             //implement 404 page
             return RedirectToAction(nameof(Index));

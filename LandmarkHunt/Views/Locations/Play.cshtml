@@ -4,35 +4,25 @@
     ViewData["Title"] = "Play";
 }
 
-<h1>Play</h1>
+<div class="h-100 d-flex align-items-center justify-content-center">
+    <div class="col-10 col-md-8 col-lg-6 text-center">
+        <h4>Guess this location</h4>
 
-<div>
-    <h4>Location</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhotoUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhotoUrl)
-        </dd>
-    </dl>
-</div>
-<div class="row">
-    <div class="col-md-4">
+        <a>@Html.DisplayFor(model => model.PhotoUrl)</a>
+            
         <form asp-action="Guess">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
+            <div class="form-group d-flex align-items-center justify-content-center">
                 <label asp-for="Year" class="control-label"></label>
-                <input asp-for="Year" class="form-control" />
+                <input asp-for="Year" class="form-control w-50 m-1" />
                 <span asp-validation-for="Year" class="text-danger"></span>
             </div>
 
             <input asp-for="Latitude" class="form-control" value="42.4848207754886" hidden />
             <input asp-for="Longitude" class="form-control" value="26.503626108169556" hidden />
 
-            <div id="map" style="width: 500px; height: 400px;"></div>
+            <div id="map" style="width: 100%; height: 500px;"></div>
 
             <div class="form-group">
                 <input type="submit" value="Guess" class="btn btn-primary" />
@@ -44,7 +34,7 @@
 @section Scripts {
     @{
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=weather"></script>
-        <script src="~/js/LocationPicker/picker.js?version-2.0"></script>
+        <script src="~/js/LocationPicker/picker.js?version-2.2"></script>
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }

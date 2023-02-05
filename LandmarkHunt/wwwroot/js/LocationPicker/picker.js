@@ -1,7 +1,7 @@
 ﻿var map = new google.maps.Map(document.getElementById('map'), {
     zoom: 12,
     center: new google.maps.LatLng(document.getElementById("Latitude").value.replace(/,/g, '.'), document.getElementById("Longitude").value.replace(/,/g, '.')),
-    mapTypeId: "satellite",
+    mapTypeId: "roadmap",
 });
 
 marker = new google.maps.Marker({

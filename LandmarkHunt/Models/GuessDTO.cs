@@ -7,12 +7,13 @@ namespace LandmarkHunt.Models
         public Location Actual;
         public Location Guess;
         public int Score;
-
-        public GuessDTO(Location actual, Location guess,int score)
+        public double Distance;
+        public GuessDTO(Location actual, Location guess,int score,double distance)
         {
             Actual = actual;
             Guess = guess;
             Score = score;
+            Distance = distance;
         }
     }
 }

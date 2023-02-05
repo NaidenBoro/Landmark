@@ -7,7 +7,7 @@ var map = new google.maps.Map(document.getElementById('map'), {
     zoom: 12,
     // center: new google.maps.LatLng(-33.92, 151.25),
     center: new google.maps.LatLng(36.8857, -76.2599),
-    mapTypeId: "satellite",
+    mapTypeId: "roadmap",
 });
 
 
