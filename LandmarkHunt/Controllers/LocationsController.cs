@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LandmarkHunt.Data;
 using LandmarkHunt.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LandmarkHunt.Controllers
 {
     public class LocationsController : Controller
     {
+        
         private readonly AppDbContext _context;
 
         public LocationsController(AppDbContext context)
@@ -20,6 +22,7 @@ namespace LandmarkHunt.Controllers
         }
 
         // GET: Locations
+        [Authorize]
         public async Task<IActionResult> Index()
         {
               return View(await _context.Locations.ToListAsync());
@@ -54,6 +57,8 @@ namespace LandmarkHunt.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        
+        
         public async Task<IActionResult> Create([Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocDTO dto)
         {
             Location location = dto.toLocation();
