@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace LandmarkHunt.Controllers
 {
+
+    [Authorize]
     public class LocationsController : Controller
     {
         
@@ -22,7 +24,6 @@ namespace LandmarkHunt.Controllers
         }
 
         // GET: Locations
-        [Authorize]
         public async Task<IActionResult> Index()
         {
               return View(await _context.Locations.ToListAsync());
