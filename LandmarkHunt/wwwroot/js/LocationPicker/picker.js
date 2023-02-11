@@ -30,24 +30,4 @@ function initialize() {
     initializeMarker();
 }
 
-function initializeMarker() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-            var pos = new google.maps.LatLng(
-                position.coords.latitude,
-                position.coords.longitude
-            );
-
-            latPosition = position.coords.latitude;
-            longPosition = position.coords.longitude;
-
-            marker = new google.maps.Marker({
-                position: pos,
-                map: map,
-            });
-
-            map.setCenter(pos);
-        });
-    }
-}
 initialize();
