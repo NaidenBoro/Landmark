@@ -42,3 +42,9 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+
+// to add migrations:
+// dotnet ef migrations add Add___Migration --project LandmarkHunt
+
+// to apply migrations:
+// dotnet ef database update --project LandmarkHunt

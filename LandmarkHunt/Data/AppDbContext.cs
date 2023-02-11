@@ -8,6 +8,8 @@ public class AppDbContext : IdentityDbContext<AppUser>
 {
     public DbSet<Location> Locations { get; set; } = null!;
 
+    public DbSet<UserGuess> UserGuesses { get; set; } = null!;
+
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
