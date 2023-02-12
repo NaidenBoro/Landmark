@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using LandmarkHunt.Data;
 using LandmarkHunt.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace LandmarkHunt.Controllers
 {
@@ -199,7 +200,18 @@ namespace LandmarkHunt.Controllers
                 {
                     return NotFound();
                 }
-                int Score = GetScore(loc,guess);
+                int Score = GetScore(loc, guess);
+                //Console.WriteLine(User.FindFirstValue(ClaimTypes.Email));
+                UserGuess userGuess = new UserGuess();
+                userGuess.Year = guess.Year;
+                userGuess.Longitude = guess.Longitude;
+                userGuess.Latitude = guess.Latitude;
+                userGuess.Score = Score;
+                userGuess.UserId = User.FindFirstValue(ClaimTypes.Email);
+                userGuess.Location = loc;
+                userGuess.User = _context.Users.First(x => x.Email == userGuess.UserId);
+                _context.UserGuesses.Add(userGuess);
+                await _context.SaveChangesAsync();
                 return View(new GuessDTO(loc,guess,Score,DistanceTo(loc,guess)));
             }
             //implement 404 page
