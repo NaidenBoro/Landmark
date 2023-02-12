@@ -4,12 +4,12 @@ namespace LandmarkHunt.Data;
 
 public class UserGuess
 {
-    public int Id { get; set; }
+    public string Id { get; set; } = Guid.NewGuid().ToString();
 
     public string UserId { get; set; } = string.Empty;
     public virtual AppUser User { get; set; } = new AppUser();
 
-    public int LocationId { get; set; }
+    public string LocationId { get; set; } = string.Empty;
     public virtual Location Location { get; set; } = new Location();
 
     public int Year { get; set; }

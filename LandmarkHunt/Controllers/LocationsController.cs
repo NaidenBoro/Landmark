@@ -30,7 +30,7 @@ namespace LandmarkHunt.Controllers
         }
 
         // GET: Locations/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string? id)
         {
             if (id == null || _context.Locations == null)
             {
@@ -93,7 +93,7 @@ namespace LandmarkHunt.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocDTO dto)
+        public async Task<IActionResult> Edit(string? id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocDTO dto)
         {
             Location location = dto.toLocation();
             if (id != location.Id)
@@ -125,7 +125,7 @@ namespace LandmarkHunt.Controllers
         }
 
         // GET: Locations/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(string? id)
         {
             if (id == null || _context.Locations == null)
             {
@@ -161,13 +161,13 @@ namespace LandmarkHunt.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool LocationExists(int id)
+        private bool LocationExists(string id)
         {
           return _context.Locations.Any(e => e.Id == id);
         }
 
 
-        public async Task<IActionResult> Play(int? id)
+        public async Task<IActionResult> Play(string? id)
         {
             if (id == null || _context.Locations == null)
             {
@@ -184,7 +184,7 @@ namespace LandmarkHunt.Controllers
             return View(location);
         }
 
-        public async Task<IActionResult> Guess(int id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocDTO dto)
+        public async Task<IActionResult> Guess(string? id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocDTO dto)
         {
             Location guess = dto.toLocation();
             if (id != guess.Id)
@@ -219,57 +219,43 @@ namespace LandmarkHunt.Controllers
             dist = dist * 180 / Math.PI;
             dist = dist * 60 * 1.1515;
 
-            switch (unit)
+            return unit switch
             {
-                case 'K': //Kilometers -> default
-                    return dist * 1.609344;
-                case 'N': //Nautical Miles 
-                    return dist * 0.8684;
-                case 'M': //Miles
-                    return dist;
-            }
-
-            return dist;
+                //Kilometers -> default
+                'K' => dist * 1.609344,
+                //Nautical Miles 
+                'N' => dist * 0.8684,
+                //Miles
+                'M' => dist,
+                _ => dist,
+            };
         }
         public static int YearScore(int guess,int actual,int hardness)
         {
-            //Graph for different hardness levels - https://www.desmos.com/calculator/xcdd0u3lbd
-            double multiplier;
-            switch (hardness)
+            var multiplier = hardness switch
             {
-                
-                case 1: //medium
-                    multiplier = 2;
-                    break;
-                case 2: //hard
-                    multiplier = 3;
-                    break;
-                default: //easy
-                    multiplier = 1;
-                    break;
-            }
-
+                //medium
+                1 => 2,
+                //hard
+                2 => 3,
+                //easy
+                _ => (double)1,
+            };
             double modifier = ((double)(2500 - actual))/(10*multiplier);
             double score = Math.Exp(-0.5*(Math.Pow((guess-actual)/modifier,2)));
             return (int)(score * multiplier*500);
         }
         public static int DistanceScore(Location loc,Location guess,int hardness)
         {
-            //Graph for different hardness levels - https://www.desmos.com/calculator/lml2drtntc
-            double multiplier;
-            switch (hardness)
+            var multiplier = hardness switch
             {
-
-                case 1: //medium
-                    multiplier = 2;
-                    break;
-                case 2: //hard
-                    multiplier = 3;
-                    break;
-                default: //easy
-                    multiplier = 1;
-                    break;
-            }
+                //medium
+                1 => 2,
+                //hard
+                2 => 3,
+                //easy
+                _ => (double)1,
+            };
             double distance = DistanceTo(loc, guess);
             double score = Math.Max(Math.Min((200.1 / multiplier-distance)/(200/multiplier),500),0);
             return (int)(score * multiplier * 500);

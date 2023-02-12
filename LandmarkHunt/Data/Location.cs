@@ -4,7 +4,7 @@ namespace LandmarkHunt.Data;
 
 public class Location
 {
-    public int Id { get; set; }
+    public string Id { get; set; } = Guid.NewGuid().ToString();
     public string Name { get; set; } = string.Empty;
     public int Year { get; set; }
     public double Latitude { get; set; }
@@ -15,4 +15,6 @@ public class Location
     public virtual AppUser CreatorUser { get; set; } = new AppUser();
 
     public virtual ICollection<UserGuess> UserGuesses { get; set; } = null!;
+
+    //public virtual ICollection<ChallengeLocation> ChallengeLocations { get; set; } = null!;
 }

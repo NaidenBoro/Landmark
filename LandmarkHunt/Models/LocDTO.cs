@@ -4,7 +4,7 @@ namespace LandmarkHunt.Models
 {
     public class LocDTO
     {
-        public int Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         public string Name { get; set; } = string.Empty;
         public int Year { get; set; }
         public string Latitude { get; set; } = string.Empty;
