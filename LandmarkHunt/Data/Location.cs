@@ -16,5 +16,5 @@ public class Location
 
     public virtual ICollection<UserGuess> UserGuesses { get; set; } = null!;
 
-    //public virtual ICollection<ChallengeLocation> ChallengeLocations { get; set; } = null!;
+    public virtual ICollection<ChallengeLocation> ChallengeLocations { get; set; } = null!;
 }

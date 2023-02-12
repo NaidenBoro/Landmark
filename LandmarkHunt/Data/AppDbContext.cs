@@ -12,6 +12,10 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     public DbSet<UserGuess> UserGuesses { get; set; } = null!;
 
+    public DbSet<Challenge> Challenges { get; set; } = null!;
+
+    public DbSet<ChallengeLocation> ChallengeLocations { get; set; } = null!;
+
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
