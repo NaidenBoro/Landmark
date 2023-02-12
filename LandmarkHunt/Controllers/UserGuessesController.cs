@@ -29,7 +29,7 @@ namespace LandmarkHunt.Controllers
         }
 
         // GET: UserGuesses/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(string? id)
         {
             if (id == null || _context.UserGuesses == null)
             {

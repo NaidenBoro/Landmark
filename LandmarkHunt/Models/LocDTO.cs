@@ -11,9 +11,8 @@ namespace LandmarkHunt.Models
         public string Longitude { get; set; } = string.Empty;
         public string PhotoUrl { get; set; } = string.Empty;
 
-        public Location toLocation()
+        public void UpdateLocation(Location loc)
         {
-            Location loc = new Location();
             loc.Id = Id;
             loc.Name = Name;
             loc.Year = Year;
@@ -22,8 +21,6 @@ namespace LandmarkHunt.Models
             loc.Latitude = double.Parse(Latitude);
             loc.Longitude = double.Parse(Longitude);
             loc.PhotoUrl= PhotoUrl;
-            return loc;
-
         }
     }
 

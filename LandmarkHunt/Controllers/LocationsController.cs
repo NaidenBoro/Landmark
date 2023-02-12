@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LandmarkHunt.Data;
@@ -63,18 +59,21 @@ namespace LandmarkHunt.Controllers
         
         public async Task<IActionResult> Create([Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocDTO dto)
         {
-            Location location = dto.toLocation();
             if (ModelState.IsValid)
             {
+                var location = new Location();
+                location.CreatorUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                dto.UpdateLocation(location);
+
                 _context.Add(location);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(location);
+            return View(dto);
         }
 
         // GET: Locations/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string? id)
         {
             if (id == null || _context.Locations == null)
             {
@@ -96,33 +95,24 @@ namespace LandmarkHunt.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string? id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocDTO dto)
         {
-            Location location = dto.toLocation();
-            if (id != location.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
+                var location = await _context.Locations.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+                if (location == null) 
                 {
-                    _context.Update(location);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!LocationExists(location.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+
+                dto.UpdateLocation(location);
+
+                await _context.SaveChangesAsync();
+              
+                
                 return RedirectToAction(nameof(Index));
             }
-            return View(location);
+
+            return View(dto);
         }
 
         // GET: Locations/Delete/5
@@ -146,7 +136,7 @@ namespace LandmarkHunt.Controllers
         // POST: Locations/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string? id)
         {
             if (_context.Locations == null)
             {
@@ -187,42 +177,52 @@ namespace LandmarkHunt.Controllers
 
         public async Task<IActionResult> Guess(string? id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocDTO dto)
         {
-            Location guess = dto.toLocation();
-            if (id != guess.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                Location? loc = await _context.Locations.FirstOrDefaultAsync(x=> guess.Id == x.Id);
+                var guessYear = dto.Year;
+                var guessLatitude = double.Parse(dto.Latitude);
+                var guessLongitude = double.Parse(dto.Longitude);
+
+                var loc = await _context.Locations.FirstOrDefaultAsync(x => x.Id == dto.Id);
                 if (loc == null) 
                 {
                     return NotFound();
                 }
-                int Score = GetScore(loc, guess);
+                int Score = GetScore(loc.Year, loc.Latitude, loc.Longitude, guessYear, guessLatitude, guessLongitude);
                 //Console.WriteLine(User.FindFirstValue(ClaimTypes.Email));
-                UserGuess userGuess = new UserGuess();
-                userGuess.Year = guess.Year;
-                userGuess.Longitude = guess.Longitude;
-                userGuess.Latitude = guess.Latitude;
+                var userGuess = new UserGuess();
+                userGuess.Year = guessYear;
+                userGuess.Latitude = guessLatitude;
+                userGuess.Longitude = guessLongitude;
                 userGuess.Score = Score;
                 userGuess.UserId = User.FindFirstValue(ClaimTypes.Email);
                 userGuess.Location = loc;
                 userGuess.User = _context.Users.First(x => x.Email == userGuess.UserId);
                 _context.UserGuesses.Add(userGuess);
                 await _context.SaveChangesAsync();
-                return View(new GuessDTO(loc,guess,Score,DistanceTo(loc,guess)));
+                return View(
+                    new GuessDTO(
+                        loc.Name,
+                        loc.Year,
+                        loc.Latitude,
+                        loc.Longitude,
+                        guessYear,
+                        guessLatitude,
+                        guessLongitude,
+                        Score,
+                        DistanceTo(loc.Latitude, loc.Longitude, guessLatitude, guessLongitude)));
             }
             //implement 404 page
             return RedirectToAction(nameof(Index));
         }
-        public static int GetScore(Location loc, Location guess,int hardness = 0) => DistanceScore(loc, guess,hardness) + YearScore(guess.Year, loc.Year,hardness);
-        public static double DistanceTo(Location loc, Location guess, char unit = 'K')
+        private static int GetScore(int locYear, double locLatitude, double locLongitude, int guessYear, double guessLatitude, double guessLongitude, int hardness = 0)
+        =>  DistanceScore(locLatitude, locLongitude, guessLatitude, guessLongitude, hardness) + YearScore(guessYear, locYear, hardness);
+
+        public static double DistanceTo(double locLatitude, double locLongitude, double guessLatitude, double guessLongitude, char unit = 'K')
         {
-            double rlat1 = Math.PI * loc.Latitude / 180;
-            double rlat2 = Math.PI * guess.Latitude / 180;
-            double theta = loc.Longitude - guess.Longitude;
+            double rlat1 = Math.PI * locLatitude / 180;
+            double rlat2 = Math.PI * guessLatitude / 180;
+            double theta = locLongitude - guessLongitude;
             double rtheta = Math.PI * theta / 180;
             double dist =
                 Math.Sin(rlat1) * Math.Sin(rlat2) + Math.Cos(rlat1) *
@@ -257,7 +257,7 @@ namespace LandmarkHunt.Controllers
             double score = Math.Exp(-0.5*(Math.Pow((guess-actual)/modifier,2)));
             return (int)(score * multiplier*500);
         }
-        public static int DistanceScore(Location loc,Location guess,int hardness)
+        public static int DistanceScore(double locLatitude, double locLongitude, double guessLatitude, double guessLongitude, int hardness)
         {
             var multiplier = hardness switch
             {
@@ -268,7 +268,7 @@ namespace LandmarkHunt.Controllers
                 //easy
                 _ => (double)1,
             };
-            double distance = DistanceTo(loc, guess);
+            double distance = DistanceTo(locLatitude, locLongitude, guessLatitude, guessLongitude);
             double score = Math.Max(Math.Min((200.1 / multiplier-distance)/(200/multiplier),500),0);
             return (int)(score * multiplier * 500);
         }
