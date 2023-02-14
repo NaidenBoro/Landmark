@@ -5,6 +5,7 @@ using LandmarkHunt.Data;
 using LandmarkHunt.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using System.Globalization;
 
 namespace LandmarkHunt.Controllers
 {
@@ -57,7 +58,7 @@ namespace LandmarkHunt.Controllers
         [ValidateAntiForgeryToken]
         
         
-        public async Task<IActionResult> Create([Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocDTO dto)
+        public async Task<IActionResult> Create([Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocModel dto)
         {
             if (ModelState.IsValid)
             {
@@ -93,7 +94,7 @@ namespace LandmarkHunt.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string? id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocDTO dto)
+        public async Task<IActionResult> Edit(string? id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocModel dto)
         {
             if (ModelState.IsValid)
             {
@@ -175,13 +176,13 @@ namespace LandmarkHunt.Controllers
             return View(location);
         }
 
-        public async Task<IActionResult> Guess(string? id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocDTO dto)
+        public async Task<IActionResult> Guess(string? id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocModel dto)
         {
             if (ModelState.IsValid)
             {
                 var guessYear = dto.Year;
-                var guessLatitude = double.Parse(dto.Latitude);
-                var guessLongitude = double.Parse(dto.Longitude);
+                var guessLatitude = double.Parse(dto.Latitude, CultureInfo.InvariantCulture);
+                var guessLongitude = double.Parse(dto.Longitude, CultureInfo.InvariantCulture);
 
                 var loc = await _context.Locations.FirstOrDefaultAsync(x => x.Id == dto.Id);
                 if (loc == null) 
@@ -201,7 +202,7 @@ namespace LandmarkHunt.Controllers
                 _context.UserGuesses.Add(userGuess);
                 await _context.SaveChangesAsync();
                 return View(
-                    new GuessDTO(
+                    new GuessModel(
                         loc.Name,
                         loc.Year,
                         loc.Latitude,

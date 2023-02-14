@@ -2,7 +2,7 @@
 
 namespace LandmarkHunt.Models;
 
-public record GuessDTO
+public record GuessModel
 (
     string ActualName,
     int ActualYear,

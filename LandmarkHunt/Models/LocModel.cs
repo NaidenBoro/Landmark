@@ -1,8 +1,9 @@
 ﻿using LandmarkHunt.Data;
+using System.Globalization;
 
 namespace LandmarkHunt.Models
 {
-    public class LocDTO
+    public class LocModel
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public string Name { get; set; } = string.Empty;
@@ -15,11 +16,11 @@ namespace LandmarkHunt.Models
         {
             loc.Id = Id;
             loc.Name = Name;
-            loc.Year = Year;
+            loc.Year = Year;/*
             Latitude= Latitude.Replace(".",",");
-            Longitude = Longitude.Replace(".", ",");
-            loc.Latitude = double.Parse(Latitude);
-            loc.Longitude = double.Parse(Longitude);
+            Longitude = Longitude.Replace(".", ",");*/
+            loc.Latitude = double.Parse(Latitude, CultureInfo.InvariantCulture);
+            loc.Longitude = double.Parse(Longitude, CultureInfo.InvariantCulture);
             loc.PhotoUrl= PhotoUrl;
         }
     }
