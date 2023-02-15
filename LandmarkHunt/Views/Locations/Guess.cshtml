@@ -15,9 +15,9 @@
             <a>You were spot on, the year is @(Model.ActualYear)!</a>
         }else if (Math.Abs(Model.ActualYear - Model.GuessYear) == 1)
         {
-            <a>Your guess was just one year appart, the year is actualy @(Model.ActualYear)!</a>
+            <a>Your guess was just one year apart, the year is actually @(Model.ActualYear)!</a>
         }else{
-            <a>Your guess was @(Math.Abs(Model.ActualYear - Model.GuessYear)) years appart, the year is actualy @(Model.ActualYear).</a>
+            <a>Your guess was @(Math.Abs(Model.ActualYear - Model.GuessYear)) years apart, the year is actually @(Model.ActualYear).</a>
         }
         <a>Your guess was @(String.Format("{0:0.##}", Model.Distance)) km away.</a>
         <input id="Latitude" class="form-control" value="@Model.ActualLatitude" hidden/>

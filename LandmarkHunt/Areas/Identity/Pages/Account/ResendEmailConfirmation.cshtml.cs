@@ -67,7 +67,7 @@ namespace LandmarkHunt.Areas.Identity.Pages.Account
             var user = await _userManager.FindByEmailAsync(Input.Email);
             if (user == null)
             {
-                ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
+                ModelState.AddModelError(string.Empty, "Email not found. You need to register with this email!");
                 return Page();
             }
 
