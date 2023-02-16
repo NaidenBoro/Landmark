@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LandmarkHunt.Data;
 using System.Security.Claims;
+using LandmarkHunt.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LandmarkHunt.Controllers
 {
+    [Authorize]
     public class ChallengesController : Controller
     {
         private readonly AppDbContext _context;
@@ -22,7 +25,7 @@ namespace LandmarkHunt.Controllers
         // GET: Challenges
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Challenges.Include(c => c.CreatorUser);
+            var appDbContext = _context.Challenges.Include(c => c.CreatorUser).Where(x => x.CreatorUser.Email == User.FindFirstValue(ClaimTypes.Email));
             return View(await appDbContext.ToListAsync());
         }
 
@@ -49,7 +52,9 @@ namespace LandmarkHunt.Controllers
         public IActionResult Create()
         {
             ViewData["CreatorUserId"] = new SelectList(_context.Users, "Id", "Id");
-            return View();
+            ChallengeCreationModel model = new ChallengeCreationModel();
+            model.GuessedLocations = _context.UserGuesses.Where(x => x.User.Email == User.FindFirstValue(ClaimTypes.Email)).Select(x => x.Location).Distinct().ToList();
+            return View(model);
         }
 
         // POST: Challenges/Create

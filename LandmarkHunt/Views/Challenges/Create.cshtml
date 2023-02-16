@@ -1,4 +1,4 @@
-﻿@model LandmarkHunt.Data.Challenge
+﻿@model ChallengeCreationModel
 
 @{
     ViewData["Title"] = "Create";
@@ -17,6 +17,10 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+            @foreach (var el in Model.GuessedLocations){
+                <a>@el.Name</a>
+            }
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
