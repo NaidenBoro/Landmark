@@ -14,7 +14,7 @@ public class Location
     public string CreatorUserId { get; set; } = string.Empty;
     public virtual AppUser CreatorUser { get; set; } = new AppUser();
 
-    public virtual ICollection<UserGuess> UserGuesses { get; set; } = null!;
+    public virtual ICollection<UserGuess> UserGuesses { get; set; } = new List<UserGuess>();
 
-    public virtual ICollection<ChallengeLocation> ChallengeLocations { get; set; } = null!;
+    public virtual ICollection<ChallengeLocation> ChallengeLocations { get; set; } = new List<ChallengeLocation>();
 }

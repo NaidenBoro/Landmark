@@ -10,7 +10,7 @@ namespace LandmarkHunt.Areas.Identity.Data;
 // Add profile data for application users by adding properties to the AppUser class
 public class AppUser : IdentityUser
 {
-    public virtual ICollection<Location> Locations { get; set; } = null!;
-    public virtual ICollection<UserGuess> UserGuesses { get; set; } = null!;
+    public virtual ICollection<Location> Locations { get; set; } = new List<Location>();
+    public virtual ICollection<UserGuess> UserGuesses { get; set; } = new List<UserGuess>();
 }
 
