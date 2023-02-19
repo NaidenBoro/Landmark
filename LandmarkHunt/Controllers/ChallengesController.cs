@@ -62,7 +62,7 @@ namespace LandmarkHunt.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name")] Challenge challenge)
+        public async Task<IActionResult> Create([Bind("Name")] Challenge challenge,List<string> locations)
         {
             challenge.ChallengeLocations = new List<ChallengeLocation>();
             challenge.CreatorUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);

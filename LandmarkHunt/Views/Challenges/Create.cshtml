@@ -9,7 +9,7 @@
 <h4>Challenge</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-8 col-lg-6" >
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -17,10 +17,16 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            @foreach (var el in Model.GuessedLocations){
-                <a>@el.Name</a>
-            }
+            <div class="form-group">
+                <select name="locations" class="w-100" id="locations" multiple multiselect-hide-x="true">
 
+                @foreach (var el in Model.GuessedLocations)
+                {
+                    <option value="@el.Id">@el.Name</option>
+                }
+
+                </select>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -34,4 +40,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/MultiSelect/multiselect-dropdown.js?1.0"></script>
 }
