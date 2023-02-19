@@ -45,6 +45,8 @@ namespace LandmarkHunt.Controllers
                 return NotFound();
             }
 
+            challenge.ChallengeLocations = _context.ChallengeLocations.Where(x => x.ChallengeId == id).ToList();
+            challenge.Locations = challenge.ChallengeLocations.Select(x => _context.Locations.First(y => y.Id == x.LocationId)).ToList();
             return View(challenge);
         }
 
@@ -62,14 +64,36 @@ namespace LandmarkHunt.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name")] Challenge challenge,List<string> locations)
+        public async Task<IActionResult> Create([Bind("Name")] Challenge challenge,List<string> locs)
         {
+
+            
+            List<Location> locations = new List<Location>();
+            foreach (var el in locs)
+            {
+                locations.Add(_context.Locations.First(x=>x.Id == el));
+            }
+            if (locations.Count != 5)
+            {
+                //todo
+                return BadRequest("You need 5 locations");
+            }
             challenge.ChallengeLocations = new List<ChallengeLocation>();
             challenge.CreatorUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             challenge.CreatorUser = _context.Users.First(x => x.Id == challenge.CreatorUserId);
             if (ModelState.IsValid)
             {
                 _context.Add(challenge);
+                foreach(var el in locations)
+                {
+                    ChallengeLocation chl = new ChallengeLocation();
+                    chl.Challenge = challenge;
+                    chl.Location = el;
+                    chl.ChallengeId = challenge.Id;
+                    chl.LocationId = el.Id;
+                    _context.Add(chl);
+                }
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -77,7 +101,6 @@ namespace LandmarkHunt.Controllers
             return View(challenge);
         }
 
-        // GET: Challenges/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null || _context.Challenges == null)

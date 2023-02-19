@@ -12,5 +12,6 @@ public class Challenge
     public virtual AppUser CreatorUser { get; set; } = new AppUser();
 
     public virtual ICollection<ChallengeLocation> ChallengeLocations { get; set; } = new List<ChallengeLocation>();
+    public virtual ICollection<Location> Locations { get; set; } = new List<Location>();
 
 }

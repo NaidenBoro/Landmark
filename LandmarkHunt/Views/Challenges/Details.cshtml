@@ -23,6 +23,50 @@
             @Html.DisplayFor(model => model.CreatorUser.Id)
         </dd>
     </dl>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Year
+                </th>
+                <th>
+                    Latitude
+                </th>
+                <th>
+                    Longitude
+                </th>
+                <th>
+                    PhotoUrl
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Locations)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Year)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Latitude)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Longitude)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PhotoUrl)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |

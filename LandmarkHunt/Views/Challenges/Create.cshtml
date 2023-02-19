@@ -1,4 +1,4 @@
-﻿@model ChallengeCreationModel
+﻿@model LandmarkHunt.Models.ChallengeCreationModel
 
 @{
     ViewData["Title"] = "Create";
@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-8 col-lg-6" >
-        <form asp-action="Create">
+        <form asp-action="Create" id="challenge-form">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -18,7 +18,7 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <select name="locations" class="w-100" id="locations" multiple multiselect-hide-x="true">
+                <select name="locs" class="w-100" id="locations" multiple multiselect-hide-x="true">
 
                 @foreach (var el in Model.GuessedLocations)
                 {
@@ -26,11 +26,26 @@
                 }
 
                 </select>
+                <span id="location-error" class="text-danger" style="display:none">Please select exactly 5 locations.</span>
+
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
+        <script>
+            document.querySelector('#challenge-form').addEventListener('submit', function (event) {
+                var selectedOptions = document.querySelectorAll('#locations option:checked');
+                if (selectedOptions.length < 5) {
+                    event.preventDefault();
+                    document.querySelector('#location-error').style.display = 'inline';
+                }else{
+                    
+                    document.querySelector('#location-error').style.display = 'none';
+                }
+                        
+            });
+        </script>
     </div>
 </div>
 
