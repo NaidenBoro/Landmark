@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using System.Net.Mail;
 using System.Net;
+using LandmarkHunt.Constants;
 
 namespace LandmarkHunt.Areas.Identity.Pages.Account
 {
@@ -123,6 +124,7 @@ namespace LandmarkHunt.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, Roles.User.ToString());
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);

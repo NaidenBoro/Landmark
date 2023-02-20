@@ -10,7 +10,7 @@ using System.Globalization;
 namespace LandmarkHunt.Controllers
 {
 
-    [Authorize]
+    [Authorize(Roles ="Admin")]
     public class LocationsController : Controller
     {
         

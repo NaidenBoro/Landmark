@@ -104,7 +104,7 @@ namespace LandmarkHunt.Migrations
 
                     b.HasIndex("CreatorUserId");
 
-                    b.ToTable("Challenges");
+                    b.ToTable("Challenges", (string)null);
                 });
 
             modelBuilder.Entity("LandmarkHunt.Data.ChallengeLocation", b =>
@@ -126,7 +126,7 @@ namespace LandmarkHunt.Migrations
 
                     b.HasIndex("LocationId");
 
-                    b.ToTable("ChallengeLocations");
+                    b.ToTable("ChallengeLocations", (string)null);
                 });
 
             modelBuilder.Entity("LandmarkHunt.Data.Location", b =>
@@ -164,7 +164,7 @@ namespace LandmarkHunt.Migrations
 
                     b.HasIndex("CreatorUserId");
 
-                    b.ToTable("Locations");
+                    b.ToTable("Locations", (string)null);
                 });
 
             modelBuilder.Entity("LandmarkHunt.Data.UserGuess", b =>
@@ -198,7 +198,7 @@ namespace LandmarkHunt.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserGuesses");
+                    b.ToTable("UserGuesses", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
