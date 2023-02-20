@@ -33,10 +33,10 @@ namespace LandmarkHunt.Data
                    // await userManager.AddToRoleAsync(user, Roles.Admin.ToString());
 
                 }
-                Console.WriteLine(userInDb);
-                var item=  await userManager.AddToRoleAsync(userInDb, Roles.Admin.ToString());
+               
+                await userManager.AddToRoleAsync(userInDb, Roles.Admin.ToString());
 
-                Console.WriteLine(item);  
+             
             }
         }
     }
