@@ -19,8 +19,8 @@ namespace LandmarkHunt.Data
             }
             var user = new AppUser
             {
-                UserName = "itkariera2023",
-                Email = "itkariera2023@gmail.com"
+                UserName = "itkariera202223@gmail.com",
+                Email = "itkariera202223@gmail.com"
              
             };
             if (userManager != null)
@@ -29,14 +29,15 @@ namespace LandmarkHunt.Data
                 var userInDb = await userManager.FindByEmailAsync(user.Email);
                 if (userInDb == null)
                 {
-                   await userManager.CreateAsync(user, "Itkariera2023_");
+                    user.EmailConfirmed = true;
+                    await userManager.CreateAsync(user, "Itkariera2023_");
                    // await userManager.AddToRoleAsync(user, Roles.Admin.ToString());
 
                 }
-               
-                await userManager.AddToRoleAsync(userInDb, Roles.Admin.ToString());
+                userInDb = await userManager.FindByEmailAsync(user.Email);
+                await userManager.AddToRoleAsync(userInDb!, Roles.Admin.ToString());
 
-             
+
             }
         }
     }
