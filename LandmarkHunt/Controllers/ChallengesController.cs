@@ -23,11 +23,18 @@ namespace LandmarkHunt.Controllers
         }
 
         // GET: Challenges
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> YourChallenges()
         {
             var appDbContext = _context.Challenges.Include(c => c.CreatorUser).Where(x => x.CreatorUser.Id == User.FindFirstValue(ClaimTypes.NameIdentifier));
             return View(await appDbContext.ToListAsync());
         }
+        public async Task<IActionResult> Index()
+        {
+            List<SessionChallenge> startedGames = _context.SessionChallenges.Where(x => x.PlayerId == User.FindFirstValue(ClaimTypes.NameIdentifier)).ToList();
+            var appDbContext = _context.Challenges.Include(c => c.CreatorUser).Where(x => !startedGames.Select(c=>c.ChallengeId).Contains(x.Id) && x.CreatorUser.Id != User.FindFirstValue(ClaimTypes.NameIdentifier));
+            return View(await appDbContext.ToListAsync());
+        }
+        
 
         // GET: Challenges/Details/5
         public async Task<IActionResult> Details(string id)
@@ -95,7 +102,7 @@ namespace LandmarkHunt.Controllers
                 }
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(YourChallenges));
             }
             ViewData["CreatorUserId"] = new SelectList(_context.Users, "Id", "Id", challenge.CreatorUserId);
             return View(challenge);

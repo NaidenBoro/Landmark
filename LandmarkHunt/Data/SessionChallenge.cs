@@ -10,7 +10,6 @@ namespace LandmarkHunt.Data
         public Challenge Challenge { get; set; } = new Challenge();
         public string PlayerId { get; set; } = string.Empty;
         public virtual AppUser Player { get; set; } = new AppUser();
-
-        public int Progress;
+        public int Progress { get; set; }
     }
 }

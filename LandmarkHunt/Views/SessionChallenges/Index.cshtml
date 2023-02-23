@@ -31,9 +31,18 @@
                 @Html.DisplayFor(modelItem => item.Player.Id)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    @if (item.Progress<5) {
+                        <form asp-action="Play">
+                            <input type="hidden" name="sessionId" value="@item.Id" />
+                            <div class="form-group">
+                                <input type="submit" value="Continiue" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    }else{
+                        <a>Already Completed | </a>
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                        
+                    }
             </td>
         </tr>
 }

@@ -20,15 +20,11 @@ namespace LandmarkHunt.Controllers
         {
             _context = context;
         }
-
-        // GET: SessionChallenges
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.SessionChallenges.Include(s => s.Challenge).Include(s => s.Player);
+            var appDbContext = _context.SessionChallenges.Include(s => s.Challenge).Include(s => s.Player).Where(x => x.PlayerId == User.FindFirstValue(ClaimTypes.NameIdentifier));
             return View(await appDbContext.ToListAsync());
         }
-
-        // GET: SessionChallenges/Details/5
         public async Task<IActionResult> Details(string id)
         {
             if (id == null || _context.SessionChallenges == null)
@@ -48,7 +44,6 @@ namespace LandmarkHunt.Controllers
             return View(sessionChallenge);
         }
 
-       
         [HttpGet]
         //[ValidateAntiForgeryToken]
         public IActionResult Create(string id)
@@ -72,8 +67,6 @@ namespace LandmarkHunt.Controllers
             ViewData["PlayerId"] = new SelectList(_context.Users, "Id", "Id", sessionChallenge.PlayerId);
             return Play(sessionChallenge.Id);
         }
-
-        // GET: SessionChallenges/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null || _context.SessionChallenges == null)
@@ -91,9 +84,6 @@ namespace LandmarkHunt.Controllers
             return View(sessionChallenge);
         }
 
-        // POST: SessionChallenges/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("Id,ChallengeId,PlayerId")] SessionChallenge sessionChallenge)
@@ -127,8 +117,6 @@ namespace LandmarkHunt.Controllers
             ViewData["PlayerId"] = new SelectList(_context.Users, "Id", "Id", sessionChallenge.PlayerId);
             return View(sessionChallenge);
         }
-
-        // GET: SessionChallenges/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null || _context.SessionChallenges == null)
@@ -148,7 +136,6 @@ namespace LandmarkHunt.Controllers
             return View(sessionChallenge);
         }
 
-        // POST: SessionChallenges/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
@@ -166,12 +153,35 @@ namespace LandmarkHunt.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
         private bool SessionChallengeExists(string id)
         {
           return _context.SessionChallenges.Any(e => e.Id == id);
         }
         public IActionResult Play(string sessionId)
+        {
+            SessionChallenge sessionChallenge = getSession(sessionId);
+            if (sessionChallenge.Progress >= 5)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            Location curLoc = sessionChallenge.Challenge.Locations
+                .OrderBy(x => x.Id)
+                .ToArray()[sessionChallenge.Progress];
+
+            List<Location> guessed = _context.UserGuesses
+                .Include(u => u.Location).Include(u => u.User)
+                .Where(x => x.User.Id == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                .Select(x => x.Location).ToList();
+            if (guessed.Contains(curLoc))
+            {
+                //implement logic
+                //return View("AlreadyGuessed");
+                Console.WriteLine("here");
+            }
+            ViewData["sessionId"] = sessionId;
+            return View("PLayLocation", curLoc);
+        }
+        private SessionChallenge getSession(string sessionId)
         {
             SessionChallenge sessionChallenge = _context.SessionChallenges.First(x => x.Id == sessionId);
             sessionChallenge.Challenge = _context.Challenges
@@ -183,31 +193,14 @@ namespace LandmarkHunt.Controllers
                 .Select(x => _context.Locations
                 .First(y => y.Id == x.LocationId))
                 .ToList();
-            var CurPlayer = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if(CurPlayer != sessionChallenge.PlayerId) 
+            var CurPlayerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (CurPlayerId != sessionChallenge.PlayerId)
             {
                 //todo error
             }
             sessionChallenge.Player = _context.Users.First(x => x.Id == sessionChallenge.PlayerId);
-
-            Location curLoc = sessionChallenge.Challenge.Locations
-                .OrderBy(x => x.Id)
-                .ToArray()[sessionChallenge.Progress];
-
-            List<Location> guessed = _context.UserGuesses
-                .Include(u => u.Location).Include(u => u.User)
-                .Where(x => x.User.Id == User.FindFirstValue(ClaimTypes.NameIdentifier))
-                .Select(x=>x.Location).ToList();
-            if (guessed.Contains(curLoc))
-            {
-                //implement logic
-                //return View("AlreadyGuessed");
-                Console.WriteLine("here");
-            }
-            ViewData["sessionId"] = sessionId;
-            return View("PLayLocation",curLoc);
+            return sessionChallenge;
         }
-
         public async Task<IActionResult> Guess(string? id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocModel dto,string sessionId)
         {
             if (ModelState.IsValid)
@@ -232,6 +225,9 @@ namespace LandmarkHunt.Controllers
                 userGuess.Location = loc;
                 userGuess.User = _context.Users.First(x => x.Id == userGuess.UserId);
                 _context.UserGuesses.Add(userGuess);
+                SessionChallenge session = getSession(sessionId);
+                session.Progress++;
+                _context.SessionChallenges.Update(session);
                 await _context.SaveChangesAsync();
                 ViewData["sessionId"] = sessionId;
                 return View(
@@ -251,7 +247,6 @@ namespace LandmarkHunt.Controllers
         }
         private static int GetScore(int locYear, double locLatitude, double locLongitude, int guessYear, double guessLatitude, double guessLongitude, int hardness = 0)
         => DistanceScore(locLatitude, locLongitude, guessLatitude, guessLongitude, hardness) + YearScore(guessYear, locYear, hardness);
-
         public static double DistanceTo(double locLatitude, double locLongitude, double guessLatitude, double guessLongitude, char unit = 'K')
         {
             double rlat1 = Math.PI * locLatitude / 180;

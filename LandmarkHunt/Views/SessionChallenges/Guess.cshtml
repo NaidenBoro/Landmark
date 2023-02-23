@@ -26,9 +26,14 @@
         <input id="GLat" class="form-control" value="@Model.GuessLatitude" hidden />
         <input id="GLon" class="form-control" value="@Model.GuessLongitude" hidden/>
         <div id="map" style="width: 100%; height: 500px;"></div>
-
-        <input type="hidden" name="sessionId" value="@ViewData["sessionId"]" />
-        <a asp-controller="Home" asp-action="Index">Home</a>
+        
+        <form asp-action="Play">
+            <input type="hidden" name="sessionId" value="@ViewData["sessionId"]" />
+            <div class="form-group">
+                <input type="submit" value="Next" class="btn btn-primary" />
+            </div>
+        </form>
+        
     </div>
 </div>
 
