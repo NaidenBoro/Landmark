@@ -89,7 +89,7 @@ namespace LandmarkHunt.Areas.Identity.Pages.Account
             {
                 MailMessage message = new MailMessage();
                 SmtpClient smtpClient = new SmtpClient();
-                message.From = new MailAddress("itkariera2023@gmail.com");
+                message.From = new MailAddress("itkariera202223@gmail.com");
                 message.To.Add(email);
                 message.Subject = subject;
                 message.IsBodyHtml = true;
@@ -98,7 +98,7 @@ namespace LandmarkHunt.Areas.Identity.Pages.Account
                 smtpClient.Host = "smtp.gmail.com";
                 smtpClient.EnableSsl = true;
                 smtpClient.UseDefaultCredentials = false;
-                smtpClient.Credentials = new NetworkCredential("itkariera2023@gmail.com", "mthdpnqwcmwogcdl");
+                smtpClient.Credentials = new NetworkCredential("itkariera202223@gmail.com", "bzoejfxhmxmpvuco");
                 smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
                 smtpClient.Send(message);
                 return true;
