@@ -47,19 +47,14 @@ namespace LandmarkHunt.Controllers
         }
 
         // GET: SessionChallenges/Create
-        public IActionResult Create()
-        {
-            ViewData["ChallengeId"] = new SelectList(_context.Challenges, "Id", "Id");
-            ViewData["PlayerId"] = new SelectList(_context.Users, "Id", "Id");
-            return View();
-        }
+        
 
         // POST: SessionChallenges/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string challengeId)
+        [HttpGet]
+        //[ValidateAntiForgeryToken]
+        public Task<IActionResult> Create(string challengeId)
         {
             SessionChallenge sessionChallenge = new SessionChallenge();
             sessionChallenge.ChallengeId = challengeId;
@@ -73,12 +68,12 @@ namespace LandmarkHunt.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(sessionChallenge);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                _context.SaveChanges();
+                //return RedirectToAction(nameof(Index));
             }
             ViewData["ChallengeId"] = new SelectList(_context.Challenges, "Id", "Id", sessionChallenge.ChallengeId);
             ViewData["PlayerId"] = new SelectList(_context.Users, "Id", "Id", sessionChallenge.PlayerId);
-            return View(sessionChallenge);
+            return (Task<IActionResult>)Play(sessionChallenge.Id);
         }
 
         // GET: SessionChallenges/Edit/5
@@ -178,6 +173,40 @@ namespace LandmarkHunt.Controllers
         private bool SessionChallengeExists(string id)
         {
           return _context.SessionChallenges.Any(e => e.Id == id);
+        }
+        public IActionResult Play(string sessionId)
+        {
+            SessionChallenge sessionChallenge = _context.SessionChallenges.First(x => x.Id == sessionId);
+            sessionChallenge.Challenge = _context.Challenges
+                .First(x => x.Id == sessionChallenge.ChallengeId);
+            sessionChallenge.Challenge.ChallengeLocations = _context.ChallengeLocations
+                .Where(x => x.ChallengeId == sessionChallenge.ChallengeId)
+                .ToList();
+            sessionChallenge.Challenge.Locations = sessionChallenge.Challenge.ChallengeLocations
+                .Select(x => _context.Locations
+                .First(y => y.Id == x.LocationId))
+                .ToList();
+            var CurPlayer = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if(CurPlayer != sessionChallenge.PlayerId) 
+            {
+                //todo error
+            }
+            sessionChallenge.Player = _context.Users.First(x => x.Id == sessionChallenge.PlayerId);
+
+            Location curLoc = sessionChallenge.Challenge.Locations
+                .OrderBy(x => x.Id)
+                .ToArray()[sessionChallenge.Progress];
+
+            List<Location> guessed = _context.UserGuesses
+                .Include(u => u.Location).Include(u => u.User)
+                .Where(x => x.User.Id == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                .Select(x=>x.Location).ToList();
+            if (guessed.Contains(curLoc))
+            {
+                //implement logic
+            }
+            Console.WriteLine("here");
+            return View(curLoc);
         }
     }
 }
