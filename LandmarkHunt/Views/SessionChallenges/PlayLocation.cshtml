@@ -12,7 +12,8 @@
 
         <form asp-action="Guess">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Id" value="@Model.Id"/>
+            <input type="hidden" name="sessionId" value="@ViewData["sessionId"]" />
             <div class="form-group d-flex align-items-center justify-content-center">
                 <label asp-for="Year" class="control-label"></label>
                 <input asp-for="Year" class="form-control w-50 m-1" />

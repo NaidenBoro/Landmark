@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LandmarkHunt.Data;
 using System.Security.Claims;
+using LandmarkHunt.Models;
+using System.Globalization;
 
 namespace LandmarkHunt.Controllers
 {
@@ -46,19 +48,14 @@ namespace LandmarkHunt.Controllers
             return View(sessionChallenge);
         }
 
-        // GET: SessionChallenges/Create
-        
-
-        // POST: SessionChallenges/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+       
         [HttpGet]
         //[ValidateAntiForgeryToken]
-        public Task<IActionResult> Create(string challengeId)
+        public IActionResult Create(string id)
         {
             SessionChallenge sessionChallenge = new SessionChallenge();
-            sessionChallenge.ChallengeId = challengeId;
-            sessionChallenge.Challenge = _context.Challenges.First(x => x.Id == challengeId);
+            sessionChallenge.ChallengeId = id;
+            sessionChallenge.Challenge = _context.Challenges.First(x => x.Id == id);
             sessionChallenge.Challenge.ChallengeLocations = _context.ChallengeLocations.Where(x => x.ChallengeId == sessionChallenge.ChallengeId).ToList();
             sessionChallenge.Challenge.Locations = sessionChallenge.Challenge.ChallengeLocations.Select(x => _context.Locations.First(y => y.Id == x.LocationId)).ToList();
 
@@ -73,7 +70,7 @@ namespace LandmarkHunt.Controllers
             }
             ViewData["ChallengeId"] = new SelectList(_context.Challenges, "Id", "Id", sessionChallenge.ChallengeId);
             ViewData["PlayerId"] = new SelectList(_context.Users, "Id", "Id", sessionChallenge.PlayerId);
-            return (Task<IActionResult>)Play(sessionChallenge.Id);
+            return Play(sessionChallenge.Id);
         }
 
         // GET: SessionChallenges/Edit/5
@@ -204,9 +201,110 @@ namespace LandmarkHunt.Controllers
             if (guessed.Contains(curLoc))
             {
                 //implement logic
+                //return View("AlreadyGuessed");
+                Console.WriteLine("here");
             }
-            Console.WriteLine("here");
-            return View(curLoc);
+            ViewData["sessionId"] = sessionId;
+            return View("PLayLocation",curLoc);
+        }
+
+        public async Task<IActionResult> Guess(string? id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocModel dto,string sessionId)
+        {
+            if (ModelState.IsValid)
+            {
+                var guessYear = dto.Year;
+                var guessLatitude = double.Parse(dto.Latitude, CultureInfo.InvariantCulture);
+                var guessLongitude = double.Parse(dto.Longitude, CultureInfo.InvariantCulture);
+
+                var loc = await _context.Locations.FirstOrDefaultAsync(x => x.Id == id);
+                if (loc == null)
+                {
+                    return NotFound();
+                }
+                int Score = GetScore(loc.Year, loc.Latitude, loc.Longitude, guessYear, guessLatitude, guessLongitude);
+                //Console.WriteLine(User.FindFirstValue(ClaimTypes.Email));
+                var userGuess = new UserGuess();
+                userGuess.Year = guessYear;
+                userGuess.Latitude = guessLatitude;
+                userGuess.Longitude = guessLongitude;
+                userGuess.Score = Score;
+                userGuess.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                userGuess.Location = loc;
+                userGuess.User = _context.Users.First(x => x.Id == userGuess.UserId);
+                _context.UserGuesses.Add(userGuess);
+                await _context.SaveChangesAsync();
+                ViewData["sessionId"] = sessionId;
+                return View(
+                    new GuessModel(
+                        loc.Name,
+                        loc.Year,
+                        loc.Latitude,
+                        loc.Longitude,
+                        guessYear,
+                        guessLatitude,
+                        guessLongitude,
+                        Score,
+                        DistanceTo(loc.Latitude, loc.Longitude, guessLatitude, guessLongitude)));
+            }
+            //implement 404 page
+            return RedirectToAction(nameof(Index));
+        }
+        private static int GetScore(int locYear, double locLatitude, double locLongitude, int guessYear, double guessLatitude, double guessLongitude, int hardness = 0)
+        => DistanceScore(locLatitude, locLongitude, guessLatitude, guessLongitude, hardness) + YearScore(guessYear, locYear, hardness);
+
+        public static double DistanceTo(double locLatitude, double locLongitude, double guessLatitude, double guessLongitude, char unit = 'K')
+        {
+            double rlat1 = Math.PI * locLatitude / 180;
+            double rlat2 = Math.PI * guessLatitude / 180;
+            double theta = locLongitude - guessLongitude;
+            double rtheta = Math.PI * theta / 180;
+            double dist =
+                Math.Sin(rlat1) * Math.Sin(rlat2) + Math.Cos(rlat1) *
+                Math.Cos(rlat2) * Math.Cos(rtheta);
+            dist = Math.Acos(dist);
+            dist = dist * 180 / Math.PI;
+            dist = dist * 60 * 1.1515;
+
+            return unit switch
+            {
+                //Kilometers -> default
+                'K' => dist * 1.609344,
+                //Nautical Miles 
+                'N' => dist * 0.8684,
+                //Miles
+                'M' => dist,
+                _ => dist,
+            };
+        }
+        public static int YearScore(int guess, int actual, int hardness)
+        {
+            var multiplier = hardness switch
+            {
+                //medium
+                1 => 2,
+                //hard
+                2 => 3,
+                //easy
+                _ => (double)1,
+            };
+            double modifier = ((double)(2500 - actual)) / (10 * multiplier);
+            double score = Math.Exp(-0.5 * (Math.Pow((guess - actual) / modifier, 2)));
+            return (int)(score * multiplier * 500);
+        }
+        public static int DistanceScore(double locLatitude, double locLongitude, double guessLatitude, double guessLongitude, int hardness)
+        {
+            var multiplier = hardness switch
+            {
+                //medium
+                1 => 2,
+                //hard
+                2 => 3,
+                //easy
+                _ => (double)1,
+            };
+            double distance = DistanceTo(locLatitude, locLongitude, guessLatitude, guessLongitude);
+            double score = Math.Max(Math.Min((200.1 / multiplier - distance) / (200 / multiplier), 500), 0);
+            return (int)(score * multiplier * 500);
         }
     }
 }
