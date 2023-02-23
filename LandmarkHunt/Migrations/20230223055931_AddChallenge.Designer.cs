@@ -4,6 +4,7 @@ using LandmarkHunt.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LandmarkHunt.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230223055931_AddChallenge")]
+    partial class AddChallenge
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,6 +157,9 @@ namespace LandmarkHunt.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SessionChallengeId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("Year")
                         .HasColumnType("int");
 
@@ -163,6 +168,8 @@ namespace LandmarkHunt.Migrations
                     b.HasIndex("ChallengeId");
 
                     b.HasIndex("CreatorUserId");
+
+                    b.HasIndex("SessionChallengeId");
 
                     b.ToTable("Locations");
                 });
@@ -402,6 +409,10 @@ namespace LandmarkHunt.Migrations
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
+                    b.HasOne("LandmarkHunt.Data.SessionChallenge", null)
+                        .WithMany("Locations")
+                        .HasForeignKey("SessionChallengeId");
+
                     b.Navigation("CreatorUser");
                 });
 
@@ -515,6 +526,11 @@ namespace LandmarkHunt.Migrations
                     b.Navigation("ChallengeLocations");
 
                     b.Navigation("UserGuesses");
+                });
+
+            modelBuilder.Entity("LandmarkHunt.Data.SessionChallenge", b =>
+                {
+                    b.Navigation("Locations");
                 });
 #pragma warning restore 612, 618
         }

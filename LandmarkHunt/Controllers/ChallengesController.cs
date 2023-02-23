@@ -25,7 +25,7 @@ namespace LandmarkHunt.Controllers
         // GET: Challenges
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Challenges.Include(c => c.CreatorUser).Where(x => x.CreatorUser.Email == User.FindFirstValue(ClaimTypes.Email));
+            var appDbContext = _context.Challenges.Include(c => c.CreatorUser).Where(x => x.CreatorUser.Id == User.FindFirstValue(ClaimTypes.NameIdentifier));
             return View(await appDbContext.ToListAsync());
         }
 
@@ -55,7 +55,7 @@ namespace LandmarkHunt.Controllers
         {
             ViewData["CreatorUserId"] = new SelectList(_context.Users, "Id", "Id");
             ChallengeCreationModel model = new ChallengeCreationModel();
-            model.GuessedLocations = _context.UserGuesses.Where(x => x.User.Email == User.FindFirstValue(ClaimTypes.Email)).Select(x => x.Location).Distinct().ToList();
+            model.GuessedLocations = _context.UserGuesses.Where(x => x.User.Id == User.FindFirstValue(ClaimTypes.NameIdentifier)).Select(x => x.Location).Distinct().ToList();
             return View(model);
         }
 

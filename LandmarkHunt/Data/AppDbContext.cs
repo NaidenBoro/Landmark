@@ -15,7 +15,7 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<Challenge> Challenges { get; set; } = null!;
 
     public DbSet<ChallengeLocation> ChallengeLocations { get; set; } = null!;
-
+    public DbSet<SessionChallenge> SessionChallenges { get; set; } = null!;
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
@@ -33,5 +33,10 @@ public class AppDbContext : IdentityDbContext<AppUser>
             .HasOne(e => e.CreatorUser)
             .WithMany(e => e.Locations)
             .OnDelete(DeleteBehavior.ClientCascade);
+        builder
+           .Entity<SessionChallenge>()
+           .HasOne(e => e.Player)
+           .WithMany(e => e.Sessions)
+           .OnDelete(DeleteBehavior.ClientCascade);
     }
 }

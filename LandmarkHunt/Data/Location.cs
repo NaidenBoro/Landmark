@@ -17,4 +17,5 @@ public class Location
     public virtual ICollection<UserGuess> UserGuesses { get; set; } = new List<UserGuess>();
 
     public virtual ICollection<ChallengeLocation> ChallengeLocations { get; set; } = new List<ChallengeLocation>();
+    
 }

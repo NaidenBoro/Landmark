@@ -196,9 +196,9 @@ namespace LandmarkHunt.Controllers
                 userGuess.Latitude = guessLatitude;
                 userGuess.Longitude = guessLongitude;
                 userGuess.Score = Score;
-                userGuess.UserId = User.FindFirstValue(ClaimTypes.Email);
+                userGuess.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 userGuess.Location = loc;
-                userGuess.User = _context.Users.First(x => x.Email == userGuess.UserId);
+                userGuess.User = _context.Users.First(x => x.Id == userGuess.UserId);
                 _context.UserGuesses.Add(userGuess);
                 await _context.SaveChangesAsync();
                 return View(

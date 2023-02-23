@@ -24,7 +24,7 @@ namespace LandmarkHunt.Controllers
         // GET: UserGuesses
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.UserGuesses.Include(u => u.Location).Include(u => u.User).Where(x => x.User.Email == User.FindFirstValue(ClaimTypes.Email));
+            var appDbContext = _context.UserGuesses.Include(u => u.Location).Include(u => u.User).Where(x => x.User.Id == User.FindFirstValue(ClaimTypes.NameIdentifier));
             return View(await appDbContext.ToListAsync());
         }
 
