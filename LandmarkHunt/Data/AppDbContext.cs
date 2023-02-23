@@ -16,6 +16,7 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     public DbSet<ChallengeLocation> ChallengeLocations { get; set; } = null!;
     public DbSet<SessionChallenge> SessionChallenges { get; set; } = null!;
+    public DbSet<Photo> Photos { get; set; } = null!;
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {

@@ -21,13 +21,10 @@ namespace LandmarkHunt.Controllers
             _context = context;
         }
 
-        // GET: Locations
         public async Task<IActionResult> Index()
         {
               return View(await _context.Locations.ToListAsync());
         }
-
-        // GET: Locations/Details/5
         public async Task<IActionResult> Details(string? id)
         {
             if (id == null || _context.Locations == null)
@@ -44,20 +41,12 @@ namespace LandmarkHunt.Controllers
 
             return View(location);
         }
-
-        // GET: Locations/Create
         public IActionResult Create()
         {
             return View();
         }
-
-        // POST: Locations/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        
-        
         public async Task<IActionResult> Create([Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocModel dto)
         {
             if (ModelState.IsValid)
@@ -65,7 +54,21 @@ namespace LandmarkHunt.Controllers
                 var location = new Location();
                 location.CreatorUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 dto.UpdateLocation(location);
+                foreach (var file in Request.Form.Files)
+                {
+                    Photo img = new Photo();
 
+                    MemoryStream ms = new MemoryStream();
+                    file.CopyTo(ms);
+                    img.Bytes = ms.ToArray();
+
+                    ms.Close();
+                    ms.Dispose();
+
+                    _context.Photos.Add(img);
+                    location.PhotoUrl = img.Id;
+                    location.Photo = img;
+                }
                 _context.Add(location);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -73,7 +76,6 @@ namespace LandmarkHunt.Controllers
             return View(dto);
         }
 
-        // GET: Locations/Edit/5
         public async Task<IActionResult> Edit(string? id)
         {
             if (id == null || _context.Locations == null)
@@ -88,10 +90,6 @@ namespace LandmarkHunt.Controllers
             }
             return View(location);
         }
-
-        // POST: Locations/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string? id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocModel dto)
@@ -115,8 +113,6 @@ namespace LandmarkHunt.Controllers
 
             return View(dto);
         }
-
-        // GET: Locations/Delete/5
         public async Task<IActionResult> Delete(string? id)
         {
             if (id == null || _context.Locations == null)
@@ -270,8 +266,9 @@ namespace LandmarkHunt.Controllers
                 _ => (double)1,
             };
             double distance = DistanceTo(locLatitude, locLongitude, guessLatitude, guessLongitude);
-            double score = Math.Max(Math.Min((200.1 / multiplier-distance)/(200/multiplier),500),0);
+            double score = Math.Max(Math.Min((200.1 / multiplier - distance) / (200 / multiplier), 500), 0);
             return (int)(score * multiplier * 500);
         }
+        
     }
 }

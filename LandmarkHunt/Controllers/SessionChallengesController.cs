@@ -179,6 +179,10 @@ namespace LandmarkHunt.Controllers
                 Console.WriteLine("here");
             }
             ViewData["sessionId"] = sessionId;
+            Photo img = _context.Photos.First(x => x.Id == curLoc.PhotoUrl);
+            string imageBase64Data = Convert.ToBase64String(img.Bytes);
+            string imageDataURL = string.Format("data:image/jpg;base64,{0}", imageBase64Data);
+            ViewBag.ImageDataUrl = imageDataURL;
             return View("PLayLocation", curLoc);
         }
         private SessionChallenge getSession(string sessionId)
@@ -300,6 +304,15 @@ namespace LandmarkHunt.Controllers
             double distance = DistanceTo(locLatitude, locLongitude, guessLatitude, guessLongitude);
             double score = Math.Max(Math.Min((200.1 / multiplier - distance) / (200 / multiplier), 500), 0);
             return (int)(score * multiplier * 500);
+        }
+        public string RetrieveImage(string Id)
+        {
+            Photo img = _context.Photos.First(x => x.Id == Id);
+            string imageBase64Data = Convert.ToBase64String(img.Bytes);
+            string imageDataURL = string.Format("data:image/jpg;base64,{0}", imageBase64Data);
+            ViewBag.ImageDataUrl = imageDataURL;
+            return imageDataURL;
+            //return View("Index");
         }
     }
 }

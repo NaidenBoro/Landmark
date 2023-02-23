@@ -8,12 +8,12 @@
     <div class="col-10 col-md-8 col-lg-6 text-center">
         <h4>Guess this location</h4>
 
-        <a>@Html.DisplayFor(model => model.PhotoUrl)</a>
+        <img src="@ViewBag.ImageDataUrl" style="height: 400px;width:auto" />
 
         <form asp-action="Guess">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" value="@Model.Id"/>
-            <input type="hidden" name="sessionId" value="@ViewData["sessionId"]" />
+            <input type="hidden" name="sessionId" value="@ViewData["sessionId"]"  />
             <div class="form-group d-flex align-items-center justify-content-center">
                 <label asp-for="Year" class="control-label"></label>
                 <input asp-for="Year" class="form-control w-50 m-1" />
