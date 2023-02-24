@@ -47,13 +47,13 @@ namespace LandmarkHunt.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocModel dto)
+        public async Task<IActionResult> Create([Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocModel model)
         {
             if (ModelState.IsValid)
             {
                 var location = new Location();
                 location.CreatorUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                dto.UpdateLocation(location);
+                model.UpdateLocation(location);
                 foreach (var file in Request.Form.Files)
                 {
                     Photo img = new Photo();
@@ -73,7 +73,7 @@ namespace LandmarkHunt.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(dto);
+            return View(model);
         }
 
         public async Task<IActionResult> Edit(string? id)
@@ -92,7 +92,7 @@ namespace LandmarkHunt.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string? id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocModel dto)
+        public async Task<IActionResult> Edit(string? id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocModel model)
         {
             if (ModelState.IsValid)
             {
@@ -103,7 +103,7 @@ namespace LandmarkHunt.Controllers
                     return NotFound();
                 }
 
-                dto.UpdateLocation(location);
+                model.UpdateLocation(location);
 
                 await _context.SaveChangesAsync();
               
@@ -111,7 +111,7 @@ namespace LandmarkHunt.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(dto);
+            return View(model);
         }
         public async Task<IActionResult> Delete(string? id)
         {
@@ -172,15 +172,15 @@ namespace LandmarkHunt.Controllers
             return View(location);
         }
 
-        public async Task<IActionResult> Guess(string? id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocModel dto)
+        public async Task<IActionResult> Guess(string? id, [Bind("Id,Name,Year,Latitude,Longitude,PhotoUrl")] LocModel model)
         {
             if (ModelState.IsValid)
             {
-                var guessYear = dto.Year;
-                var guessLatitude = double.Parse(dto.Latitude, CultureInfo.InvariantCulture);
-                var guessLongitude = double.Parse(dto.Longitude, CultureInfo.InvariantCulture);
+                var guessYear = model.Year;
+                var guessLatitude = double.Parse(model.Latitude, CultureInfo.InvariantCulture);
+                var guessLongitude = double.Parse(model.Longitude, CultureInfo.InvariantCulture);
 
-                var loc = await _context.Locations.FirstOrDefaultAsync(x => x.Id == dto.Id);
+                var loc = await _context.Locations.FirstOrDefaultAsync(x => x.Id == model.Id);
                 if (loc == null) 
                 {
                     return NotFound();
