@@ -62,7 +62,14 @@ namespace LandmarkHunt.Controllers
         {
             ViewData["CreatorUserId"] = new SelectList(_context.Users, "Id", "Id");
             ChallengeCreationModel model = new ChallengeCreationModel();
-            model.GuessedLocations = _context.UserGuesses.Where(x => x.User.Id == User.FindFirstValue(ClaimTypes.NameIdentifier)).Select(x => x.Location).Distinct().ToList();
+            if (User.IsInRole("Admin"))
+            {
+                model.GuessedLocations = _context.Locations.ToList();
+            }
+            else
+            {
+                model.GuessedLocations = _context.UserGuesses.Where(x => x.User.Id == User.FindFirstValue(ClaimTypes.NameIdentifier)).Select(x => x.Location).Distinct().ToList();
+            }
             return View(model);
         }
 
