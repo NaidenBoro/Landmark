@@ -53,6 +53,7 @@ namespace LandmarkHunt.Controllers
             {
                 var location = new Location();
                 location.CreatorUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                location.CreatorUser = _context.Users.First(x=>x.Id == location.CreatorUserId);
                 model.UpdateLocation(location);
                 foreach (var file in Request.Form.Files)
                 {

@@ -21,8 +21,8 @@ namespace LandmarkHunt.Models
             _userManager = userManager;
             UserRoles = new List<UserRoleViewModel>();
         }
-      public ManageRolesViewModel()
-       {
+        public ManageRolesViewModel()
+        {
         }
 
         public SelectList RoleList

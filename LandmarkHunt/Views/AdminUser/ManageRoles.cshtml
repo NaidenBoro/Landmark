@@ -14,15 +14,32 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var user in Model.Users)
+                @{Model.UserRoles = new List<UserRoleViewModel>();}
+                @for (int i=0; i<Model.Users.Count; i++)
                 {
-                    var userRole = await Model.GetUserRole(user);
+                    var userRole = await Model.GetUserRole(Model.Users[i]);
                     <tr>
-                        <td>@user.Email</td>
+                        <td>
+                            <label asp-for="@Model.Users[i].Email">@Model.Users[i].Email</label>
+                        </td>
                         <td>@userRole</td>
                         <td>
-                            <select asp-for="@userRole" asp-items="Model.RoleList"></select>
-                            <input type="hidden" asp-for="@user.Id" />
+                            @{
+                                Model.UserRoles.Add(new UserRoleViewModel());
+                                Model.UserRoles[i].UserId = Model.Users[i].Id;
+                            }
+                            <input hidden asp-for="@Model.UserRoles[i].UserId"></input>
+                            <select asp-for="@Model.UserRoles[i].RoleName">
+                                @if(userRole == "Admin"){
+                                    <option selected>Admin</option>
+                                    <option>User</option>
+                                }
+                                else
+                                {
+                                    <option>Admin</option>
+                                    <option selected>User</option>
+                                }
+                            </select>
                         </td>
                     </tr>
                 }

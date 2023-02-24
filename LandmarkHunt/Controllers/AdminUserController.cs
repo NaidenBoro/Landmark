@@ -39,11 +39,11 @@ namespace LandmarkHunt.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (model.UserRoles is not null)
+                if (model.Users is not null)
                 {
-                    foreach (var userRole in model.UserRoles)
+                    for (int i = 0;i < model.UserRoles!.Count;i++)
                     {
-                        var user = await _userManager.FindByIdAsync(userRole.UserId);
+                        var user = await _userManager.FindByIdAsync(model.UserRoles[i].UserId);
                         if (user is null)
                         {
                             continue;
@@ -53,9 +53,9 @@ namespace LandmarkHunt.Controllers
                         {
                             await _userManager.RemoveFromRoleAsync(user, currentRole.First());
                         }
-                        if (!string.IsNullOrEmpty(userRole.RoleName))
+                        if (!string.IsNullOrEmpty(model.UserRoles[i].RoleName))
                         {
-                            await _userManager.AddToRoleAsync(user, userRole.RoleName);
+                            await _userManager.AddToRoleAsync(user, model.UserRoles[i].RoleName);
                         }
                     }
                     // Update the UserRoles property after updating the roles for each user
