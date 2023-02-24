@@ -89,7 +89,16 @@ namespace LandmarkHunt.Controllers
             {
                 return NotFound();
             }
-            return View(location);
+            LocModel model = new LocModel();
+            model.Latitude = location.Latitude.ToString();
+            model.Longitude = location.Longitude.ToString();
+            model.Name = location.Name;
+            model.Year = location.Year;
+            model.Id = id;
+            model.PhotoUrl = location.PhotoUrl;
+
+
+            return View(model);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -98,14 +107,31 @@ namespace LandmarkHunt.Controllers
             if (ModelState.IsValid)
             {
                 var location = await _context.Locations.Where(x => x.Id == id).FirstOrDefaultAsync();
-
                 if (location == null) 
                 {
                     return NotFound();
                 }
 
+                location.Photo = _context.Photos.First(x => x.Id == location.PhotoUrl);
                 model.UpdateLocation(location);
+                foreach (var file in Request.Form.Files)
+                {
+                    Photo img = new Photo();
 
+                    MemoryStream ms = new MemoryStream();
+                    file.CopyTo(ms);
+                    img.Bytes = ms.ToArray();
+
+                    ms.Close();
+                    ms.Dispose();
+                    if (location.Photo.Bytes != img.Bytes)
+                    {
+                        _context.Photos.Add(img);
+                        location.PhotoUrl = img.Id;
+                        location.Photo = img;
+                    }
+                }
+                _context.Locations.Update(location);
                 await _context.SaveChangesAsync();
               
                 

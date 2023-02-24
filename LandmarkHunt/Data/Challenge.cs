@@ -13,5 +13,6 @@ public class Challenge
 
     public virtual ICollection<ChallengeLocation> ChallengeLocations { get; set; } = new List<ChallengeLocation>();
     public virtual ICollection<Location> Locations { get; set; } = new List<Location>();
+    public virtual ICollection<SessionChallenge> Sessions { get; set; } = new List<SessionChallenge>();
 
 }

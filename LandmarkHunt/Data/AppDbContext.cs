@@ -39,5 +39,11 @@ public class AppDbContext : IdentityDbContext<AppUser>
            .HasOne(e => e.Player)
            .WithMany(e => e.Sessions)
            .OnDelete(DeleteBehavior.ClientCascade);
+        builder
+           .Entity<SessionChallenge>()
+           .HasOne(e => e.Challenge)
+           .WithMany(e => e.Sessions)
+           .OnDelete(DeleteBehavior.ClientCascade);
+
     }
 }
