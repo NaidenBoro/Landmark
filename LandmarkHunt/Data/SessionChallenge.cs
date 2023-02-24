@@ -11,5 +11,6 @@ namespace LandmarkHunt.Data
         public string PlayerId { get; set; } = string.Empty;
         public virtual AppUser Player { get; set; } = new AppUser();
         public int Progress { get; set; }
+        public int TotalScore { get; set; }
     }
 }

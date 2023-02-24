@@ -231,6 +231,7 @@ namespace LandmarkHunt.Controllers
                 _context.UserGuesses.Add(userGuess);
                 SessionChallenge session = getSession(sessionId);
                 session.Progress++;
+                session.TotalScore += Score;
                 _context.SessionChallenges.Update(session);
                 await _context.SaveChangesAsync();
                 ViewData["sessionId"] = sessionId;
