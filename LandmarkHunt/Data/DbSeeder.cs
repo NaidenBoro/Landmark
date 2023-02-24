@@ -37,12 +37,7 @@ namespace LandmarkHunt.Data
 
                 }
                 userInDb = await userManager.FindByEmailAsync(user.Email);
-                await userManager.AddToRoleAsync(userInDb!, Roles.Admin.ToString());
-
-                
-
-                
-            }
+                await userManager.AddToRoleAsync(userInDb!, Roles.Admin.ToString());            }
         }
     }
 }
