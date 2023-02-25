@@ -1,0 +1,20 @@
+﻿@model LandmarkHunt.Data.SessionChallenge
+
+@{
+    ViewData["Title"] = "Guess";
+}
+
+
+
+<div class="h-100 d-flex align-items-center justify-content-center">
+    <div class="col-10 col-md-8 col-lg-6 text-center">
+        <h1>@Model.Challenge.Name</h1>
+        <h2>Your total score was @(Model.TotalScore)!</h2>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=weather"></script>
+    <script src="~/js/LocationPicker/showGuess.js?version-2.9"></script>
+}

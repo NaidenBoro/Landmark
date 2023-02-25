@@ -162,7 +162,7 @@ namespace LandmarkHunt.Controllers
             SessionChallenge sessionChallenge = getSession(sessionId);
             if (sessionChallenge.Progress >= 5)
             {
-                return RedirectToAction(nameof(Index));
+                return View("EndGame",sessionChallenge);
             }
             Location curLoc = sessionChallenge.Challenge.Locations
                 .OrderBy(x => x.Id)

@@ -21,7 +21,6 @@ namespace LandmarkHunt.Models
             Longitude = Longitude.Replace(".", ",");*/
             loc.Latitude = double.Parse(Latitude, CultureInfo.InvariantCulture);
             loc.Longitude = double.Parse(Longitude, CultureInfo.InvariantCulture);
-            loc.PhotoUrl= PhotoUrl;
         }
     }
 
