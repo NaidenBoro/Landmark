@@ -1,0 +1,36 @@
+﻿@model LandmarkHunt.Models.LeaderboardViewModel
+
+<h1>Leaderboard</h1>
+
+@if (Model?.Users?.Count > 0)
+{
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                Model.Users = Model.Users.OrderByDescending(x => x.TotalScore).ToList();
+            }
+            @for (int i = 0; i < Model.Users.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Model.Users[i].Email
+                    </td>
+                    <td>
+                        @Model.Users[i].TotalScore
+                        </td>
+                        
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No users found.</p>
+}
