@@ -13,6 +13,6 @@ public class AppUser : IdentityUser
     public virtual ICollection<Location> Locations { get; set; } = new List<Location>();
     public virtual ICollection<UserGuess> UserGuesses { get; set; } = new List<UserGuess>();
     public virtual ICollection<SessionChallenge> Sessions { get; set; } = new List<SessionChallenge>();
-    public int TotalScore = 0;
+    public int TotalScore;
 }
 

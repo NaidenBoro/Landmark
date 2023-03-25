@@ -9,15 +9,19 @@ using LandmarkHunt.Data;
 using System.Security.Claims;
 using LandmarkHunt.Models;
 using System.Globalization;
+using LandmarkHunt.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace LandmarkHunt.Controllers
 {
     public class SessionChallengesController : Controller
     {
         private readonly AppDbContext _context;
-
-        public SessionChallengesController(AppDbContext context)
+        private readonly UserManager<AppUser> _userManager;
+        public SessionChallengesController(UserManager<AppUser> userManager, AppDbContext context)
         {
+
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _context = context;
         }
         public async Task<IActionResult> Index()
@@ -233,6 +237,7 @@ namespace LandmarkHunt.Controllers
                 session.Progress++;
                 session.TotalScore += Score;
                 _context.SessionChallenges.Update(session);
+                await LeaderboardController.UpdateUserScoreAsync(userGuess.UserId,_userManager, _context);
                 await _context.SaveChangesAsync();
                 ViewData["sessionId"] = sessionId;
                 return View(

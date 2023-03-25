@@ -17,6 +17,7 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<ChallengeLocation> ChallengeLocations { get; set; } = null!;
     public DbSet<SessionChallenge> SessionChallenges { get; set; } = null!;
     public DbSet<Photo> Photos { get; set; } = null!;
+    public DbSet<UserScore> UserScores { get; set; } = null!;
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
@@ -44,6 +45,9 @@ public class AppDbContext : IdentityDbContext<AppUser>
            .HasOne(e => e.Challenge)
            .WithMany(e => e.Sessions)
            .OnDelete(DeleteBehavior.ClientCascade);
+        builder.
+            Entity<UserScore>()
+            .HasKey(e => e.UserId);
 
     }
 }

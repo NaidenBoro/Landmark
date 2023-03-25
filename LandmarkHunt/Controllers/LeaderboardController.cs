@@ -23,18 +23,18 @@ namespace LandmarkHunt.Controllers
             var users = await _userManager.Users.ToListAsync();
             foreach (var user in users)
             {
-                await UpdateUserScoreAsync(user.Id);
+                //await UpdateUserScoreAsync(user.Id, _userManager, _context);
             }
 
-            var model = new LeaderboardViewModel(_userManager)
+            var model = new LeaderboardViewModel()
             {
-                Users = users
+                UserScores = _context.UserScores.ToList()
             };
             
 
             return View(model);
         }
-        public async Task UpdateUserScoreAsync(string id) 
+        public static async Task UpdateUserScoreAsync(string id, UserManager<AppUser> _userManager,AppDbContext _context) 
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
@@ -46,6 +46,20 @@ namespace LandmarkHunt.Controllers
             int score = sessions.Select(x => x.TotalScore).Sum();
             user.TotalScore = score;
             await _userManager.UpdateAsync(user);
+            UserScore userScore = new UserScore();
+            userScore.User = user;
+            userScore.UserId = user.Id;
+            userScore.totalScore = score;
+            userScore.UserEmail = user.Email;
+            if (_context.UserScores.Count(x => x.UserId == user.Id)==0)
+            {
+                _context.UserScores.Add(userScore);
+            }
+            else
+            {
+                _context.UserScores.Update(userScore);
+            }
+            _context.SaveChanges();
             return;
         }
     }
