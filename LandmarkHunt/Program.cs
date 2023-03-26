@@ -1,4 +1,5 @@
 using LandmarkHunt.Areas.Identity.Data;
+using LandmarkHunt.Controllers;
 using LandmarkHunt.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -49,6 +50,7 @@ app.MapRazorPages();
 using (var scope = app.Services.CreateScope())
 {
     await DbSeeder.SeedRolesAndAdminAsync(scope.ServiceProvider);
+    await LeaderboardController.InitialLeaderboard(scope.ServiceProvider);
 }
 app.Run();
 

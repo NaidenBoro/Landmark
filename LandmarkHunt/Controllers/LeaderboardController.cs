@@ -5,6 +5,7 @@ using LandmarkHunt.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace LandmarkHunt.Controllers
 {
@@ -18,14 +19,8 @@ namespace LandmarkHunt.Controllers
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<IActionResult> IndexAsync()
+        public IActionResult IndexAsync()
         {
-            var users = await _userManager.Users.ToListAsync();
-            foreach (var user in users)
-            {
-                //await UpdateUserScoreAsync(user.Id, _userManager, _context);
-            }
-
             var model = new LeaderboardViewModel()
             {
                 UserScores = _context.UserScores.ToList()
@@ -61,6 +56,16 @@ namespace LandmarkHunt.Controllers
             }
             _context.SaveChanges();
             return;
+        }
+        public static async Task InitialLeaderboard(IServiceProvider service)
+        {
+            var userManager = service.GetService<UserManager<AppUser>>();
+            var context = service.GetService<AppDbContext>();
+            var users = await userManager!.Users.ToListAsync();
+            foreach (var user in users)
+            {
+                await UpdateUserScoreAsync(user.Id, userManager, context!);
+            }
         }
     }
 }
