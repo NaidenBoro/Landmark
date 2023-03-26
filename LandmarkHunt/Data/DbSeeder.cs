@@ -13,7 +13,7 @@ namespace LandmarkHunt.Data
             var roleManager = service.GetService<RoleManager<IdentityRole>>();
             if (roleManager != null)
             {
-                
+                //If it throws an error here, try udpating the database in the PacketManager console with "Update-Database"
                 await roleManager.CreateAsync(new IdentityRole(Roles.Admin.ToString()));
                 await roleManager.CreateAsync(new IdentityRole(Roles.User.ToString()));
             }
