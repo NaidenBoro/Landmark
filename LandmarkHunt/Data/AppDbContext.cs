@@ -48,6 +48,18 @@ public class AppDbContext : IdentityDbContext<AppUser>
         builder.
             Entity<UserScore>()
             .HasKey(e => e.UserId);
+        builder.Entity<ChallengeLocation>()
+        .HasOne(cl => cl.Challenge)
+        .WithMany(c => c.ChallengeLocations)
+        .HasForeignKey(cl => cl.ChallengeId)
+        .OnDelete(DeleteBehavior.Restrict); // remove this line to allow cascade delete
+
+        builder.Entity<ChallengeLocation>()
+            .HasOne(cl => cl.Location)
+            .WithMany(l => l.ChallengeLocations)
+            .HasForeignKey(cl => cl.LocationId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
 
     }
 }

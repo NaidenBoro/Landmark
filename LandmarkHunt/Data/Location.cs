@@ -18,5 +18,23 @@ public class Location
     public virtual ICollection<UserGuess> UserGuesses { get; set; } = new List<UserGuess>();
 
     public virtual ICollection<ChallengeLocation> ChallengeLocations { get; set; } = new List<ChallengeLocation>();
-    
+
+    public static void DeleteLocationAndChallenges(Location location, AppDbContext context)
+    {
+        // delete all challenges that have this location
+        var challengeLocations = context.ChallengeLocations.Where(cl => cl.LocationId == location.Id).ToList();
+
+        // loop through each challenge location and remove its challenge
+        foreach (var challengeLocation in challengeLocations)
+        {
+            var challenge = context.Challenges.First(x=>challengeLocation.ChallengeId==x.Id);
+            Challenge.DeleteChallengeAndSessions(challenge,context);
+        }
+
+        // delete the location
+        context.Locations.Remove(location);
+
+        // save changes to the database
+        context.SaveChanges();
+    }
 }
