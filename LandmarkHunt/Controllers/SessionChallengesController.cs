@@ -48,16 +48,17 @@ namespace LandmarkHunt.Controllers
             return View(sessionChallenge);
         }
 
-        [HttpGet]
+        [HttpPost]
         //[ValidateAntiForgeryToken]
-        public IActionResult Create(string id)
+        public IActionResult Create(string id,string hardness)
         {
             SessionChallenge sessionChallenge = new SessionChallenge();
             sessionChallenge.ChallengeId = id;
             sessionChallenge.Challenge = _context.Challenges.First(x => x.Id == id);
             sessionChallenge.Challenge.ChallengeLocations = _context.ChallengeLocations.Where(x => x.ChallengeId == sessionChallenge.ChallengeId).ToList();
             sessionChallenge.Challenge.Locations = sessionChallenge.Challenge.ChallengeLocations.Select(x => _context.Locations.First(y => y.Id == x.LocationId)).ToList();
-
+            sessionChallenge.Hardness = hardness;
+            Console.WriteLine(hardness);
             sessionChallenge.PlayerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             sessionChallenge.Player = _context.Users.First(x => x.Id == sessionChallenge.PlayerId);
             sessionChallenge.Progress = 0;
@@ -176,12 +177,7 @@ namespace LandmarkHunt.Controllers
                 .Include(u => u.Location).Include(u => u.User)
                 .Where(x => x.User.Id == User.FindFirstValue(ClaimTypes.NameIdentifier))
                 .Select(x => x.Location).ToList();
-            if (guessed.Contains(curLoc))
-            {
-                //implement logic
-                //return View("AlreadyGuessed");
-                Console.WriteLine("here");
-            }
+            
             ViewData["sessionId"] = sessionId;
             Photo img = _context.Photos.First(x => x.Id == curLoc.PhotoUrl);
             string imageBase64Data = Convert.ToBase64String(img.Bytes);
@@ -216,13 +212,13 @@ namespace LandmarkHunt.Controllers
                 var guessYear = dto.Year;
                 var guessLatitude = double.Parse(dto.Latitude, CultureInfo.InvariantCulture);
                 var guessLongitude = double.Parse(dto.Longitude, CultureInfo.InvariantCulture);
-
+                SessionChallenge session = getSession(sessionId);
                 var loc = await _context.Locations.FirstOrDefaultAsync(x => x.Id == id);
                 if (loc == null)
                 {
                     return NotFound();
                 }
-                int Score = GetScore(loc.Year, loc.Latitude, loc.Longitude, guessYear, guessLatitude, guessLongitude);
+                int Score = GetScore(loc.Year, loc.Latitude, loc.Longitude, guessYear, guessLatitude, guessLongitude,session.Hardness);
                 //Console.WriteLine(User.FindFirstValue(ClaimTypes.Email));
                 var userGuess = new UserGuess();
                 userGuess.Year = guessYear;
@@ -231,9 +227,10 @@ namespace LandmarkHunt.Controllers
                 userGuess.Score = Score;
                 userGuess.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 userGuess.Location = loc;
+                userGuess.Hardness = session.Hardness;
                 userGuess.User = _context.Users.First(x => x.Id == userGuess.UserId);
                 _context.UserGuesses.Add(userGuess);
-                SessionChallenge session = getSession(sessionId);
+                
                 session.Progress++;
                 session.TotalScore += Score;
                 _context.SessionChallenges.Update(session);
@@ -255,7 +252,11 @@ namespace LandmarkHunt.Controllers
             //implement 404 page
             return RedirectToAction(nameof(Index));
         }
-        private static int GetScore(int locYear, double locLatitude, double locLongitude, int guessYear, double guessLatitude, double guessLongitude, int hardness = 0)
+        public IActionResult ChooseHardness(string id) {
+            ViewData["id"] = id;
+            return View("ChooseHardness");
+        }
+        private static int GetScore(int locYear, double locLatitude, double locLongitude, int guessYear, double guessLatitude, double guessLongitude, string hardness)
         => DistanceScore(locLatitude, locLongitude, guessLatitude, guessLongitude, hardness) + YearScore(guessYear, locYear, hardness);
         public static double DistanceTo(double locLatitude, double locLongitude, double guessLatitude, double guessLongitude, char unit = 'K')
         {
@@ -281,14 +282,14 @@ namespace LandmarkHunt.Controllers
                 _ => dist,
             };
         }
-        public static int YearScore(int guess, int actual, int hardness)
+        public static int YearScore(int guess, int actual, string hardness)
         {
             var multiplier = hardness switch
             {
                 //medium
-                1 => 2,
+                "Medium" => 2,
                 //hard
-                2 => 3,
+                "Hard" => 3,
                 //easy
                 _ => (double)1,
             };
@@ -296,14 +297,14 @@ namespace LandmarkHunt.Controllers
             double score = Math.Exp(-0.5 * (Math.Pow((guess - actual) / modifier, 2)));
             return (int)(score * multiplier * 500);
         }
-        public static int DistanceScore(double locLatitude, double locLongitude, double guessLatitude, double guessLongitude, int hardness)
+        public static int DistanceScore(double locLatitude, double locLongitude, double guessLatitude, double guessLongitude, string hardness)
         {
             var multiplier = hardness switch
             {
                 //medium
-                1 => 2,
+                "Medium" => 2,
                 //hard
-                2 => 3,
+                "Hard" => 3,
                 //easy
                 _ => (double)1,
             };

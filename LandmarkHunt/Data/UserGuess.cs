@@ -12,6 +12,8 @@ public class UserGuess
     public string LocationId { get; set; } = string.Empty;
     public virtual Location Location { get; set; } = new Location();
 
+    public string Hardness { get; set; } = "Easy";
+
     public int Year { get; set; }
     public double Latitude { get; set; }
     public double Longitude { get; set; }

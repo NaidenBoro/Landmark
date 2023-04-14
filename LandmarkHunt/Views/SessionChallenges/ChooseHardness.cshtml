@@ -1,0 +1,38 @@
+﻿
+@{
+    ViewData["Title"] = "Choose Hardness";
+}
+
+<h1>Choose hardness for ypur challenge</h1>
+
+<h4>Challenge</h4>
+<hr />
+<div class="row">
+    <div class="col-md-8 col-lg-6">
+        <form method="post" asp-action="Create" asp-route-id="@ViewData["id"]">
+            <input type="hidden" for="id" value="@ViewData["id"]"/>
+            <div class="form-group">
+                <label for="hardness">Hardness:</label>
+                <select id="hardness" name="hardness">
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+        
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
