@@ -1,6 +1,7 @@
 ﻿using LandmarkHunt.Data;
 using LandmarkHunt.Models;
 using LandmarkHunt.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
@@ -8,6 +9,7 @@ using System.Security.Claims;
 
 namespace LandmarkHunt.Controllers
 {
+    [Authorize]
     public class RandomLocationController : Controller
     {
 
