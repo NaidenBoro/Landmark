@@ -67,5 +67,13 @@ namespace LandmarkHunt.Controllers
                 await UpdateUserScoreAsync(user.Id, userManager, context!);
             }
         }
+        public static async Task UpdateAll(UserManager<AppUser> _userManager, AppDbContext _context)
+        {
+            var users = await _userManager!.Users.ToListAsync();
+            foreach (var user in users)
+            {
+                await UpdateUserScoreAsync(user.Id, _userManager, _context!);
+            }
+        }
     }
 }

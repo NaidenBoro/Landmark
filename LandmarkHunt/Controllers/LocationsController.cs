@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.Globalization;
 using LandmarkHunt.Services;
+using LandmarkHunt.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace LandmarkHunt.Controllers
 {
@@ -14,12 +16,14 @@ namespace LandmarkHunt.Controllers
     [Authorize(Roles ="Admin")]
     public class LocationsController : Controller
     {
-        
+
+        private readonly UserManager<AppUser> _userManager;
         private readonly AppDbContext _context;
 
-        public LocationsController(AppDbContext context)
+        public LocationsController(UserManager<AppUser> userManager, AppDbContext context)
         {
-            _context = context;
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public async Task<IActionResult> Index()
@@ -171,6 +175,7 @@ namespace LandmarkHunt.Controllers
             if (location != null)
             {
                 Location.DeleteLocationAndChallenges(location, _context);
+                await LeaderboardController.UpdateAll(_userManager,_context);
             }
             
             await _context.SaveChangesAsync();
