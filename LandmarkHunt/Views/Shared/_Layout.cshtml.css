@@ -1,15 +1,86 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
-a.navbar-brand {
+/*a.navbar-brand {
   white-space: normal;
   text-align: center;
   word-break: break-all;
+}*/
+.navbar {
+    background-color: #fff;
+    box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.1);
 }
 
-a {
-  color: #0077cc;
+.navbar-brand {
+    font-family: "Montserrat", sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #cc7a00;
+    text-transform: uppercase;
 }
+
+    .navbar-brand:hover {
+        color: #1b6ec2;
+    }
+
+
+.navbar-toggler-icon {
+    border: none;
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path stroke="rgba(27,110,194,1)" stroke-width="3" stroke-linecap="round" stroke-miterlimit="10" d="M4 7h22M4 15h22M4 23h22"/></svg>');
+}
+
+.nav-item {
+    margin-right: 1rem;
+}
+
+.nav-link {
+    font-family: "Roboto", sans-serif;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #444;
+}
+
+    .nav-link:hover {
+        color: #1b6ec2;
+    }
+
+.navbar-collapse {
+    justify-content: flex-end;
+}
+
+.d-flex {
+    align-items: center;
+}
+
+@media (max-width: 991px) {
+    .nav-item {
+        margin-bottom: 1rem;
+    }
+
+    .navbar-collapse {
+        background-color: #fff;
+        box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-link {
+        color: #1b6ec2;
+    }
+
+    .navbar-toggler {
+        border: none;
+    }
+
+    .navbar-toggler-icon {
+        background-image: url('data:image/svg+xml;charset=UTF-8,<svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path stroke="%231b6ec2" stroke-width="3" stroke-linecap="round" stroke-miterlimit="10" d="M4 7h22M4 15h22M4 23h22"/></svg>');
+    }
+    
+
+
+}
+
+
+
+
 
 .btn-primary {
   color: #fff;
@@ -46,3 +117,6 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+
+
