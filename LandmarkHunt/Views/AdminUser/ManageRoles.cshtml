@@ -32,12 +32,20 @@
                             <select asp-for="@Model.UserRoles[i].RoleName">
                                 @if(userRole == "Admin"){
                                     <option selected>Admin</option>
+                                    <option>Mod</option>
                                     <option>User</option>
+                                }
+                               else if (userRole =="User")
+                                {
+                                    <option>Admin</option>
+                                    <option>Mod</option>
+                                    <option selected>User</option>
                                 }
                                 else
                                 {
                                     <option>Admin</option>
-                                    <option selected>User</option>
+                                    <option selected>Mod</option>
+                                    <option>User</option>
                                 }
                             </select>
                         </td>

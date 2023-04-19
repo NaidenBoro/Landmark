@@ -15,6 +15,7 @@ namespace LandmarkHunt.Data
             {
                 //If it throws an error here, try udpating the database in the Packege Manager Console with "Update-Database"
                 await roleManager.CreateAsync(new IdentityRole(Roles.Admin.ToString()));
+                await roleManager.CreateAsync(new IdentityRole(Roles.Mod.ToString()));
                 await roleManager.CreateAsync(new IdentityRole(Roles.User.ToString()));
             }
             var user = new AppUser

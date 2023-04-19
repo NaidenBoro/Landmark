@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Identity;
 namespace LandmarkHunt.Controllers
 {
 
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin,Mod")]
     public class LocationsController : Controller
     {
 
