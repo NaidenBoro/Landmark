@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Security.Claims;
 
 namespace LandmarkHunt.Controllers
 {
@@ -23,9 +24,16 @@ namespace LandmarkHunt.Controllers
         {
             var model = new LeaderboardViewModel()
             {
-                UserScores = _context.UserScores.ToList()
+                UserScores = _context.UserScores.OrderByDescending(x=>x.totalScore).Take(10).ToList()
             };
-            
+            if (User.Identity!.IsAuthenticated)
+            {
+                model.userPlace = _context.UserScores.OrderByDescending(x => x.totalScore).ToList().IndexOf(_context.UserScores.First(x => x.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier)))+1;
+                if (model.userPlace > 10)
+                {
+                    model.UserScores.Add(_context.UserScores.First(x => x.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier)));
+                }
+            }
 
             return View(model);
         }

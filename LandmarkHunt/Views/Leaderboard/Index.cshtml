@@ -1,36 +1,56 @@
 ﻿@model LandmarkHunt.Models.LeaderboardViewModel
 
-<h1>Leaderboard</h1>
-
-@if (Model?.UserScores?.Count > 0)
-{
-    <table>
-        <thead>
-            <tr>
-                <th>User</th>
-                <th>Score</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                Model.UserScores = Model.UserScores.OrderByDescending(x => x.totalScore).ToList();
-            }
-            @for (int i = 0; i < Model.UserScores.Count; i++)
-            {
+<div style="text-align:center">
+    <h1 class="m-2" style="text-align:center">Leaderboard</h1>
+    <div class="d-flex justify-content-center">
+    @if (Model?.UserScores?.Count > 0)
+    {
+        <table style="margin:auto" class="b-2">
+            <thead>
                 <tr>
-                    <td>
-                        @Model.UserScores[i].UserEmail
-                    </td>
-                    <td>
-                        @Model.UserScores[i].totalScore
-                        </td>
-                        
+                    <th>Place</th>
+                    <th>User</th>
+                    <th>Score</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No users found.</p>
-}
+            </thead>
+            <tbody>
+
+                @for (int i = 0; i < Model.UserScores.Count; i++)
+                {
+                    <tr>
+                        @if (i > 10 || (i + 1) == Model.userPlace)
+                        {
+                            <td style="font-weight: bold">
+                                @Model.userPlace
+                            </td>
+                                <td style="font-weight: bold" class="p-1">
+                                @Model.UserScores[i].UserEmail
+                            </td>
+                            <td style="font-weight: bold">
+                                @Model.UserScores[i].totalScore
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                @(i + 1)
+                            </td>
+                                <td class="p-1">
+                                @Model.UserScores[i].UserEmail
+                            </td>
+                            <td>
+                                @Model.UserScores[i].totalScore
+                            </td>
+                        }
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No users found.</p>
+    }
+    </div>
+</div>
