@@ -135,7 +135,7 @@ namespace LandmarkHunt.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(YourChallenges));
         }
 
         private bool ChallengeExists(string id)

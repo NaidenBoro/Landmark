@@ -4,11 +4,12 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1 class="m-lg-2">Details</h1>
 
-<div>
-    <h4>UserGuess</h4>
-    <hr />
+<h4 class="ms-2">UserGuess</h4>
+<hr />
+
+<div class="ms-2">
     <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.User)
@@ -48,6 +49,6 @@
         </dd>
     </dl>
 </div>
-<div>
+<div class="ms-2">
     <a asp-action="Index">Back to List</a>
 </div>
