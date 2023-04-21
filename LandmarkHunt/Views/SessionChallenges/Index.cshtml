@@ -1,14 +1,11 @@
 ﻿@model IEnumerable<LandmarkHunt.Data.SessionChallenge>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Your Games";
 }
 
-<h1>Index</h1>
+<h1 class=" m-lg-2 ">Your Games</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -32,12 +29,11 @@
                         <form asp-action="Play">
                             <input type="hidden" name="sessionId" value="@item.Id" />
                             <div class="form-group">
-                                <input type="submit" value="Continiue" class="btn btn-primary" />
+                                <input type="submit" value="Continiue" class="btn btn-primary" style="background-color:#cc7a00; border-color:#cc7a00" />
                             </div>
                         </form>
                     }else{
-                        <a>Already Completed | Your Score was @item.TotalScore | </a>
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                        <a>Already Completed | Your Score was @item.TotalScore </a>
                         
                     }
             </td>

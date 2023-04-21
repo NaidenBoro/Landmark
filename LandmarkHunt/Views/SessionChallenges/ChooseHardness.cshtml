@@ -3,32 +3,32 @@
     ViewData["Title"] = "Choose Hardness";
 }
 
-<h1>Choose hardness for ypur challenge</h1>
 
-<h4>Challenge</h4>
-<hr />
-<div class="row">
-    <div class="col-md-8 col-lg-6">
-        <form method="post" asp-action="Create" asp-route-id="@ViewData["id"]">
-            <input type="hidden" for="id" value="@ViewData["id"]"/>
-            <div class="form-group">
-                <label for="hardness">Hardness:</label>
-                <select id="hardness" name="hardness">
-                    <option value="Easy">Easy</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Hard">Hard</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-        
+<h1 class="text-center">Choose hardness for this challenge</h1>
+
+<div class="text-center">
+  <div class="row">
+    <div class="col-md-12">
+      <form method="post" asp-action="Create" asp-route-id="@ViewData["id"]">
+        <input type="hidden" for="id" value="@ViewData["id"]"/>
+        <div class="form-group mt-1">
+          <label for="hardness">Hardness:</label>
+          <select id="hardness" name="hardness">
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <input type="submit" style="background-color:#cc7a00; border-color:#cc7a00" value="Play" class="btn btn-primary mt-3 mb-3" />
+        </div>
+      </form>
     </div>
+  </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="text-center">
+    <a style="color:#cc7a00" asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

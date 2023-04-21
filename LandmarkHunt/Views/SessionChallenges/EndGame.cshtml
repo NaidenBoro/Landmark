@@ -1,7 +1,7 @@
 ﻿@model LandmarkHunt.Data.SessionChallenge
 
 @{
-    ViewData["Title"] = "Guess";
+    ViewData["Title"] = "Game End";
 }
 
 
@@ -10,7 +10,7 @@
     <div class="col-10 col-md-8 col-lg-6 text-center">
         <h1>@Model.Challenge.Name</h1>
         <h2>Your total score was @(Model.TotalScore)!</h2>
-
+        <a style="color:#cc7a00" asp-action="Index" >Your Games</a>
     </div>
 </div>
 
