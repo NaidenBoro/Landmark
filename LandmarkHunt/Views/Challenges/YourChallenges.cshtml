@@ -4,11 +4,12 @@
     ViewData["Title"] = "Your Challenges";
 }
 
-<h1>Your Challenges</h1>
+<h1 class="m-lg-2">Your Challenges</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
+<p class="ms-2" Your Challenges>
+    <a style="color:#cc7a00" asp-action="Create">Create New</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
@@ -31,9 +32,7 @@
                 @Html.DisplayFor(modelItem => item.CreatorUser.Id)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a style="color:red" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
 }
