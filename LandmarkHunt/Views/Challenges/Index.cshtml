@@ -3,9 +3,12 @@
 @{
     ViewData["Title"] = "Games";
 }
+<div style="text-align:center">
 
-<h1>Index</h1>
-<table class="table">
+<h1 class="m-2" style="text-align:center">Challenges for you</h1>
+<div class="d-flex justify-content-center">
+        <table style="margin:auto;border-collapse: separate;
+ border-spacing: 16px 0px;" class="b-2">
     <thead>
         <tr>
             <th>
@@ -24,15 +27,14 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatorUser.Id)
+                @Html.DisplayFor(modelItem => item.CreatorUser.Email)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>|
-                <a asp-controller="SessionChallenges" asp-action="ChooseHardness" asp-route-id="@item.Id">Play</a>
+                            <a asp-controller="SessionChallenges" asp-action="ChooseHardness" asp-route-id="@item.Id" style="color: #cc7a00">Play</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+</div>
+</div>

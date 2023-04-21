@@ -36,26 +36,7 @@ namespace LandmarkHunt.Controllers
         }
         
 
-        // GET: Challenges/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null || _context.Challenges == null)
-            {
-                return NotFound();
-            }
-
-            var challenge = await _context.Challenges
-                .Include(c => c.CreatorUser)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (challenge == null)
-            {
-                return NotFound();
-            }
-
-            challenge.ChallengeLocations = _context.ChallengeLocations.Where(x => x.ChallengeId == id).ToList();
-            challenge.Locations = challenge.ChallengeLocations.Select(x => _context.Locations.First(y => y.Id == x.LocationId)).ToList();
-            return View(challenge);
-        }
+        
 
         // GET: Challenges/Create
         public IActionResult Create()
@@ -115,59 +96,10 @@ namespace LandmarkHunt.Controllers
             return View(challenge);
         }
 
-        public async Task<IActionResult> Edit(string id)
-        {
-            if (id == null || _context.Challenges == null)
-            {
-                return NotFound();
-            }
 
-            var challenge = await _context.Challenges.FindAsync(id);
-            if (challenge == null)
-            {
-                return NotFound();
-            }
-            ViewData["CreatorUserId"] = new SelectList(_context.Users, "Id", "Id", challenge.CreatorUserId);
-            return View(challenge);
-        }
-
-        // POST: Challenges/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Name")] Challenge challenge)
-        {
-            if (id != challenge.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(challenge);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ChallengeExists(challenge.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CreatorUserId"] = new SelectList(_context.Users, "Id", "Id", challenge.CreatorUserId);
-            return View(challenge);
-        }
 
         // GET: Challenges/Delete/5
+        [Authorize(Roles = "Admin,Mod")]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null || _context.Challenges == null)
@@ -188,6 +120,7 @@ namespace LandmarkHunt.Controllers
 
         // POST: Challenges/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin,Mod")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
