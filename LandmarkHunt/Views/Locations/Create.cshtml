@@ -6,18 +6,18 @@
 
 <h1>Create</h1>
 
-<h4>Location</h4>
+<h4 class="m-lg-2">Location</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="row; ms-2">
+    <div class="col-md-4;">
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+            <div class="form-group; mb-2">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group; mb-2">
                 <label asp-for="Year" class="control-label"></label>
                 <input asp-for="Year" class="form-control" />
                 <span asp-validation-for="Year" class="text-danger"></span>
@@ -26,19 +26,19 @@
             <input asp-for="Latitude" class="form-control" value="42.4848207754886" hidden/>
             <input asp-for="Longitude" class="form-control" value="26.503626108169556" hidden/>
 
-            <div id="map" style="width: 500px; height: 400px;"></div>
+            <div id="map" style="width: 500px; height: 400px;" class="mb-2"></div>
             
-            <input type="file" id="file1" name="file1"/>
+            <input type="file" id="file1" name="file1" class="mb-2"/>
 
-            <div class="form-group">
+            <div class="form-group; mb-2">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="ms-2">
+    <a style="color:#cc7a00" asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

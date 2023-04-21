@@ -1,60 +1,62 @@
 ﻿@model LandmarkHunt.Models.ManageRolesViewModel
 
-<h1>Manage User Roles</h1>
+<h1 class="m-lg-2">Manage User Roles</h1>
 
 @if (Model?.Users?.Count > 0)
 {
-    <form asp-action="ManageRoles" method="post">
-        <table>
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Current Role</th>
-                    <th>New Role</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{Model.UserRoles = new List<UserRoleViewModel>();}
-                @for (int i=0; i<Model.Users.Count; i++)
-                {
-                    var userRole = await Model.GetUserRole(Model.Users[i]);
+    <div class="ms-2">
+        <form asp-action="ManageRoles" method="post">
+            <table>
+                <thead>
                     <tr>
-                        <td>
-                            <label asp-for="@Model.Users[i].Email">@Model.Users[i].Email</label>
-                        </td>
-                        <td>@userRole</td>
-                        <td>
-                            @{
-                                Model.UserRoles.Add(new UserRoleViewModel());
-                                Model.UserRoles[i].UserId = Model.Users[i].Id;
-                            }
-                            <input hidden asp-for="@Model.UserRoles[i].UserId"></input>
-                            <select asp-for="@Model.UserRoles[i].RoleName">
-                                @if(userRole == "Admin"){
-                                    <option selected>Admin</option>
-                                    <option>Mod</option>
-                                    <option>User</option>
-                                }
-                               else if (userRole =="User")
-                                {
-                                    <option>Admin</option>
-                                    <option>Mod</option>
-                                    <option selected>User</option>
-                                }
-                                else
-                                {
-                                    <option>Admin</option>
-                                    <option selected>Mod</option>
-                                    <option>User</option>
-                                }
-                            </select>
-                        </td>
+                        <th>User</th>
+                        <th>Current Role</th>
+                        <th>New Role</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-        <button type="submit">Save</button>
-    </form>
+                </thead>
+                <tbody>
+                    @{Model.UserRoles = new List<UserRoleViewModel>();}
+                    @for (int i=0; i<Model.Users.Count; i++)
+                    {
+                        var userRole = await Model.GetUserRole(Model.Users[i]);
+                        <tr>
+                            <td>
+                                <label asp-for="@Model.Users[i].Email">@Model.Users[i].Email</label>
+                            </td>
+                            <td>@userRole</td>
+                            <td>
+                                @{
+                                    Model.UserRoles.Add(new UserRoleViewModel());
+                                    Model.UserRoles[i].UserId = Model.Users[i].Id;
+                                }
+                                <input hidden asp-for="@Model.UserRoles[i].UserId"></input>
+                                <select asp-for="@Model.UserRoles[i].RoleName">
+                                    @if(userRole == "Admin"){
+                                        <option selected>Admin</option>
+                                        <option>Mod</option>
+                                        <option>User</option>
+                                    }
+                                   else if (userRole =="User")
+                                    {
+                                        <option>Admin</option>
+                                        <option>Mod</option>
+                                        <option selected>User</option>
+                                    }
+                                    else
+                                    {
+                                        <option>Admin</option>
+                                        <option selected>Mod</option>
+                                        <option>User</option>
+                                    }
+                                </select>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button type="submit">Save</button>
+        </form>
+    </div>
 }
 else
 {
